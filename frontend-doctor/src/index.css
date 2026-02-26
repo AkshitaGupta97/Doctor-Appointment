@@ -1,3 +1,10 @@
 @import "tailwindcss";
 
+body{
+    background: linear-gradient(135deg, #f0b9f1, #b0c4ee);
+    
+}
 
+.active hr{
+    @apply block
+}
