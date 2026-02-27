@@ -37,7 +37,7 @@ const Navbar = () => {
             {
                 token ? <div className="flex items-center justify-center gap-2 group relative">
                     <span className="material-symbols-outlined 
-                        text-transparent  bg-gradient-to-tr from-amber-900 via-blue-700 to-teal-600  bg-clip-text text-5xl drop-shadow-md  cursor-pointer
+                        text-amber-700 bg-clip-text text-5xl drop-shadow-md  cursor-pointer
                         shadow-lg rounded transition-transform duration-300 hover:scale-110 hover:drop-shadow-xl" style={{fontSize:"36px"}}>
                         account_circle
                     </span>
