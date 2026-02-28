@@ -73,7 +73,7 @@ export const doctors = [
     _id: "4",
     name: "Dr. Neha Verma",
     image: "https://tse1.mm.bing.net/th/id/OIP.3XIZh8kdU45u9jE5wUgwYQHaHv?rs=1&pid=ImgDetMain&o=7&rm=3",
-    speciality: "Pediatrician",
+    speciality: "Pediatrians",
     degree: "MS (Orthopedics)",
     experience: "14 years",
     about: "Specialist in bone and joint surgeries, sports injuries, and arthritis management.",
