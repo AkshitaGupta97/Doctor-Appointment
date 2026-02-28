@@ -21,7 +21,7 @@ export const specialityData = [
         image:"https://tse3.mm.bing.net/th/id/OIP.hZiacz_sVabYhipbA8RSOQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3"
     },
     {
-        speciality: 'Surgeon',
+        speciality: 'Cardiologist',
         image:"https://th.bing.com/th/id/OIP.bihv-ea1pg93xQK8q_B08wHaHa?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3"
     },
 ]
@@ -73,7 +73,7 @@ export const doctors = [
     _id: "4",
     name: "Dr. Neha Verma",
     image: "https://tse1.mm.bing.net/th/id/OIP.3XIZh8kdU45u9jE5wUgwYQHaHv?rs=1&pid=ImgDetMain&o=7&rm=3",
-    speciality: "Orthopedic Surgeon",
+    speciality: "Pediatrician",
     degree: "MS (Orthopedics)",
     experience: "14 years",
     about: "Specialist in bone and joint surgeries, sports injuries, and arthritis management.",
@@ -115,7 +115,7 @@ export const doctors = [
     _id: "7",
     name: "Dr. Anjali Desai",
     image: "https://tse1.mm.bing.net/th/id/OIP.3XIZh8kdU45u9jE5wUgwYQHaHv?rs=1&pid=ImgDetMain&o=7&rm=3",
-    speciality: "Gynecologist",
+    speciality: "Neurologist",
     degree: "MD (Gynecology & Obstetrics)",
     experience: "13 years",
     about: "Provides care for women’s reproductive health, pregnancy, and infertility treatments.",
@@ -157,7 +157,7 @@ export const doctors = [
     _id: "10",
     name: "Dr. Anjali Desai",
     image: "https://tse1.mm.bing.net/th/id/OIP.3XIZh8kdU45u9jE5wUgwYQHaHv?rs=1&pid=ImgDetMain&o=7&rm=3",
-    speciality: "Gynecologist",
+    speciality: "Physician",
     degree: "MD (Gynecology & Obstetrics)",
     experience: "13 years",
     about: "Provides care for women’s reproductive health, pregnancy, and infertility treatments.",
@@ -171,7 +171,7 @@ export const doctors = [
     _id: "11",
     name: "Dr. Anjali Desai",
     image: "https://tse1.mm.bing.net/th/id/OIP.3XIZh8kdU45u9jE5wUgwYQHaHv?rs=1&pid=ImgDetMain&o=7&rm=3",
-    speciality: "Gynecologist",
+    speciality: "Dermatologist",
     degree: "MD (Gynecology & Obstetrics)",
     experience: "13 years",
     about: "Provides care for women’s reproductive health, pregnancy, and infertility treatments.",
