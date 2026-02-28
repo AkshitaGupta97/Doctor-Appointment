@@ -1,12 +1,16 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
-import { doctors } from "../assets/myassets"
+import { AppContext } from "../context/AppContext";
+
 
 const TopDoctors = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const {doctors} = useContext(AppContext);
+
     return (
         <div>
-            <h1>Top Doctors</h1>
-            <p>Health needs, primary care, Our doctors offer routine checkups, preventive care best treatment🩺</p>
+            <h1 className="text-3xl text-center text-emerald-800">Top Doctors</h1>
+            <p className="ssm:w-1/3 text-center ">Health needs, primary care, Our doctors offer routine checkups, preventive care best treatment🩺</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {doctors.slice(0, 9).map((item, idx) => (
@@ -27,8 +31,8 @@ const TopDoctors = () => {
                     </div>
                 ))}
             </div>
-            <div className="flex justify-center mt-10">
-                <button className="bg-blue-300 cursor-pointer flex items-center text-gray-800 px-4 py-2 rounded-full">
+            <div className="flex justify-center mt-8">
+                <button onClick={() => {navigate('/doctors'); scrollTo([0,0])}} className="bg-blue-300 cursor-pointer flex items-center text-gray-800 px-4 py-2 rounded-full">
                     more...<span className="material-symbols-outlined text-amber-800">arrow_right_alt</span>
                 </button>
             </div>
