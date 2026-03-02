@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { AppContext } from "../context/AppContext";
+import RelatedDoctors from "../components/RelatedDoctors";
 
 const Appointment = () => {
 
@@ -17,7 +18,7 @@ const Appointment = () => {
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId);
     setDocInfo(docInfo);
-    //console.log(docInfo)
+    console.log(docInfo)
   }
 
   // days of 30-minute time slots (from 10 AM to 9 PM) and stores them in docSlots.
@@ -147,8 +148,10 @@ const Appointment = () => {
         </div>
 
         <button className="bg-teal-800 text-white rounded-full px-2 py-2 cursor-pointer mt-4 items-center justify-center hover:scale-105 transition-all ">Book Apointment</button>
-
       </div>
+
+      {/* listing related doctors */}
+      <RelatedDoctors docId={docId} speciality={docInfo?.speciality} />
 
     </div>
   )
