@@ -13,8 +13,8 @@ const Login = () => {
   }
 
   return (
-    <form className="min-h-[80vh] flex items-center">
-      <div className={`flex flex-col gap-2 m-auto items-start ${state === 'Sign Up' ? "bg-teal-900" : "bg-blue-900"}  text-white p-8 min-w-85 sm:min-w-96 border border-amber-300 rounded-xl shadow-lg  `}>
+    <form className="min-h-[80vh]  flex items-center">
+      <div className={`flex flex-col gap-2 m-auto items-start ${state === 'Sign Up' ? "bg-teal-900" : "bg-blue-900"}  text-white p-8 md:p-5 min-w-85 sm:min-w-96 border border-amber-300 rounded-xl shadow-lg  `}>
         <p className="text-3xl border-b text-blue-100 border-amber-200">{state === 'Sign Up' ? "Create Account" : "Login"}</p>
         <p>{state === 'Sign Up' ? <span className="text-amber-200">Sign up</span> : <span className="text-amber-200">Login</span>} to Book Appointment</p>
         {
