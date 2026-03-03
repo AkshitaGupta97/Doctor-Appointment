@@ -4,7 +4,7 @@ export const Header = () => {
     <div className="flex flex-col md:flex-row flex-wrap bg-teal-950 rounded-lg px-4 md:px-8 lg:px-12">
 
         {/* Left side ********** */}
-        <div className="md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 m-auto md:py-[8vw] md:mb-[-20px]">
+        <div className="md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 m-auto md:py-[8vw] md:-mb-5">
             <p className="text-2xl md:text-3xl lg:text-4xl text-white font-semibold leading-tight md:leading-tight lg:leading-tight">🩺 Connecting Doctors<br /> ⚕️Your Health, Our Priority</p>
 
             <div className="flex flex-col md:flex-row items-center gap-3 text-white text-sm">

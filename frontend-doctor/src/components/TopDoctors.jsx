@@ -32,7 +32,7 @@ const TopDoctors = () => {
                 ))}
             </div>
             <div className="flex justify-center mt-8">
-                <button onClick={() => {navigate('/doctors'); scrollTo([0,0])}} className="bg-blue-300 cursor-pointer flex items-center text-gray-800 px-4 py-2 rounded-full">
+                <button onClick={() => {navigate('/doctors'); scrollTo([0,0])}} className="bg-blue-300 cursor-pointer flex items-center text-gray-800 px-4 py-2 hover:scale-95 transition-all rounded-full">
                     more...<span className="material-symbols-outlined text-amber-800">arrow_right_alt</span>
                 </button>
             </div>
