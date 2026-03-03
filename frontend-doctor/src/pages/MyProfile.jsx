@@ -19,7 +19,7 @@ const MyProfile = () => {
 
   return (
     <div className="max-w-lg flex flex-col gap-2 text-sm">
-      <img className="w-44 rounded-2xl" src={userData.image} alt="profile" />
+      <img className="w-44 rounded-2xl shadow-lg" src={userData.image} alt="profile" />
       {
         isEdit ?
           <input className="bg-gray-400 text-lg px-0.5 py-1 max-w-60 mt-4 outline-none  rounded-xl"

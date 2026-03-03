@@ -14,7 +14,7 @@ const TopDoctors = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {doctors.slice(0, 9).map((item, idx) => (
-                    <div onClick={()=> navigate(`/appointment/${item._id}`)}
+                    <div onClick={()=> {navigate(`/appointment/${item._id}`); scrollTo(0,0)}}
                         key={idx}
                         className="bg-stone-200 cursor-pointer rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 p-5 flex flex-col items-center text-center"
                     >
@@ -32,7 +32,7 @@ const TopDoctors = () => {
                 ))}
             </div>
             <div className="flex justify-center mt-8">
-                <button onClick={() => {navigate('/doctors'); scrollTo([0,0])}} className="bg-blue-300 cursor-pointer flex items-center text-gray-800 px-4 py-2 hover:scale-95 transition-all rounded-full">
+                <button onClick={() => {navigate('/doctors'); scrollTo(0,0)}} className="bg-blue-300 cursor-pointer flex items-center text-gray-800 px-4 py-2 hover:scale-95 transition-all rounded-full">
                     more...<span className="material-symbols-outlined text-amber-800">arrow_right_alt</span>
                 </button>
             </div>
