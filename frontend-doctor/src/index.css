@@ -29,3 +29,9 @@ body{
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
+
+@media (max-width:740px){
+  .active p{
+    @apply text-white bg-blue-700 
+  }
+}
