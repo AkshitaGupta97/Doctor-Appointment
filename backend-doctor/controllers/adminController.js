@@ -13,6 +13,8 @@ export const addDoctor = async(req, res) => {
         if(!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address || !imageFile){
             return res.status(400).json({success: false, message: "All details are required.."});
         }
+        console.log("BODY:", req.body);
+        console.log("FILE:", req.file);
         // validating email
         if(!validator.isEmail(email)){
             return res.status(400).json({success: false, message: "Enter valid email.."});
