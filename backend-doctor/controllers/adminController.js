@@ -23,6 +23,7 @@ export const addDoctor = async(req, res) => {
         // ecrypt password by bcrypt using hashing
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
+        console.log("req.file =", req.file);
         // upload image to cloudinary
         const imageUpload = await cloudinary.uploader.upload(imageFile.path, {resource_type:"image"});
         const imageUrl =imageUpload.secure_url;
