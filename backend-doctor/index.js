@@ -10,9 +10,9 @@ const app = express();
 const port = process.env.PORT || 4000
 connectDB();
 connectCloudinary();
-console.log("CLOUD NAME:", process.env.CLOUDINARY_NAME);
-console.log("API KEY:", process.env.CLOUDINARY_API_KEY);
-console.log("SECRET:", process.env.CLOUDINARY_SECRET);
+//console.log("CLOUD NAME:", process.env.CLOUDINARY_NAME);
+//console.log("API KEY:", process.env.CLOUDINARY_API_KEY);
+//console.log("SECRET:", process.env.CLOUDINARY_SECRET);
 // MIDDLEWARE
 app.use(express.json());
 app.use(cors());
