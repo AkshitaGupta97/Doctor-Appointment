@@ -35,7 +35,7 @@ export const addDoctor = async(req, res) => {
         try {
             parsedAddress = JSON.parse(address);
         } catch (parseError) {
-            return res.status(400).json({success: false, message: "Invalid address format. Must be valid JSON."});
+            return res.json({success: false, message: "Invalid address format. Must be valid JSON."});
         }
         const doctorData = {
             name, email, degree, speciality, experience, about, fees,  
@@ -48,7 +48,7 @@ export const addDoctor = async(req, res) => {
 
     } catch (error) {
         console.log("error from admin -> addDoctor = ", error);
-        return res.status(500).json({success: false, message: "Internal server error"});
+        return res.json({success: false, message: "Internal server error"});
     }
 }
 
@@ -59,9 +59,7 @@ export const adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All details are required.." });
+      return res.json({ success: false, message: "All details are required.." });
     }
 
     if (
@@ -80,9 +78,7 @@ export const adminLogin = async (req, res) => {
         token,
       });
     } else {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials.." });
+      return res.json({ success: false, message: "Invalid credentials.." });
     }
   } catch (error) {
     console.log("error from admin -> adminLogin =", error);
