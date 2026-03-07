@@ -23,6 +23,7 @@ const Navbar = () => {
             className="bg-blue-600 hover:bg-blue-800 cursor-pointer text-white font-bold py-2 px-4 rounded">
             Logout
         </button>
+
     </div>
   )
 }
