@@ -1,13 +1,21 @@
+import { useContext } from "react";
 import Login from "./pages/Login";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { AdminContext } from "./context/AdminContext";
+import Navbar from "./components/Navbar";
 
 function App() {
 
-  return (
-    <div className="w-screen h-screen flex items-center justify-center bg-slate-100">
+  const {adToken} = useContext(AdminContext);
 
-      <Login />
+  return (
+    <div>
+      {
+        adToken ? 
+          <Navbar />
+        : <Login />
+      }
 
       <ToastContainer
         position="top-right"
