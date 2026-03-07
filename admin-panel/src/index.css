@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Your custom styles here */
 
 * {
   margin: 0%;
@@ -15,6 +15,7 @@ body {
 }
 
 body {
-  background-color: #dcc3c3;
-  
+  background-color: #eee3e3;
+  font-weight: 600;
+  overflow-x: hidden;
 }
