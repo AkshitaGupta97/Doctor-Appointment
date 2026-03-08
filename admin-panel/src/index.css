@@ -10,7 +10,6 @@ body {
 }
 
 body {
-  background-color: #eee3e3;
   font-weight: 600;
   overflow-x: hidden;
 }
@@ -48,4 +47,8 @@ body {
 /* Progress bar */
 .Toastify__progress-bar {
   background: rgba(255,255,255,0.8);
+}
+
+::-webkit-scrollbar {
+  display: none;
 }

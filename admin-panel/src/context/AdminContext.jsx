@@ -16,17 +16,18 @@ const AdminContextProvider = ({ children }) => {
            const {data} =  await axios.post(`${backendUrl}/api/admin/all-doctors`, {} , {headers : {Authorization : `Bearer ${adToken}`} });
            if(data.success){
             setDoctors(data.doctors);
+            console.log(data.doctors);
            }
            else{
             toast.error(data.message);
            }
         } catch (error) {
-            toast.error(data.message);
+            toast.error("Something went wrong while fetching doctors list");
         }
     }
 
     const value = {
-        adToken, setAdToken, backendUrl
+        adToken, setAdToken, backendUrl, doctors, setDoctors, getAllDoctorList
     }
 
     return (
