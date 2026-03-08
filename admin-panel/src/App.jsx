@@ -23,18 +23,18 @@ function App() {
             <>
               <Navbar />
 
-              <div className="flex items-start">
-                <Sidebar />
+              <Sidebar />
+
+              <div className="ml-68 mt-18 h-[calc(100vh-6rem)] overflow-y-auto">
                 <Routes>
-                  <Route path='/' element={<></>} />
                   <Route path='/admin-dashboard' element={<Dashboard />} />
-                  <Route path='/all-appointments' element={<AllAppointment/>} />
-                  <Route path='/add-doctor' element={<AddDoctor/>} />
-                  <Route path='/doctor-list' element={<DoctorList/>} />
+                  <Route path='/all-appointments' element={<AllAppointment />} />
+                  <Route path='/add-doctor' element={<AddDoctor />} />
+                  <Route path='/doctor-list' element={<DoctorList />} />
                   <Route path='*' element={<h1 className="text-2xl text-center mt-20">404 Not Found</h1>} />
                 </Routes>
               </div>
-               
+
             </>
           )
 
