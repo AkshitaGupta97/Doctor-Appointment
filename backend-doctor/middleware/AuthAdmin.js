@@ -9,7 +9,7 @@ export const authAdmin = async (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1]; // remove Bearer
-    console.log("TOKEN:", token);
+   // console.log("TOKEN:", token);
 
     if (!token) {
       return res.status(401).json({ success: false, message: "Token missing" });
