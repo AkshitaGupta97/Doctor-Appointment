@@ -12,3 +12,16 @@ export const changeAvailability = async (req, res) => {
         res.json({success: false, message: "Internal server error"})
     }
 }
+
+// get doctor list
+export const getDoctorList = async(req, res) => {
+    try {
+        const doctors = await doctorModel.find({available: true}).select(['-password', '-email']);
+
+        res.json({success: true, doctors});
+
+    } catch (error) {
+        console.log("error from doctor -> getDoctorList = ", error);
+        res.json({success: false, message: error.message})
+    }
+}

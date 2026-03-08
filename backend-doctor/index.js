@@ -4,28 +4,37 @@ import 'dotenv/config';
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
 import adminRouter from './routes/adminRoute.js';
+import doctorRouter from './routes/doctorRoute.js';
 
-// app config
 const app = express();
-const port = process.env.PORT || 4000
-connectDB();
-connectCloudinary();
-//console.log("CLOUD NAME:", process.env.CLOUDINARY_NAME);
-//console.log("API KEY:", process.env.CLOUDINARY_API_KEY);
-//console.log("SECRET:", process.env.CLOUDINARY_SECRET);
-// MIDDLEWARE
+const port = process.env.PORT || 4000;
+
+// middleware
 app.use(express.json());
 app.use(cors());
 
-// api end points
+// routes
 app.use('/api/admin', adminRouter);
-
-
+app.use('/api/doctors', doctorRouter);
 
 app.get('/', (req, res) => {
-    res.send('API WORKING')
+    res.send('API WORKING');
 });
 
-app.listen(port, ()=> console.log("Server is live on ", port))
+// START SERVER AFTER DB CONNECTS
+const startServer = async () => {
+    try {
 
+        await connectDB();        // wait for MongoDB
+        connectCloudinary();      // cloudinary connect
 
+        app.listen(port, () => {
+            console.log("🚀 Server is live on", port);
+        });
+
+    } catch (error) {
+        console.log("Server start failed:", error);
+    }
+};
+
+startServer();
