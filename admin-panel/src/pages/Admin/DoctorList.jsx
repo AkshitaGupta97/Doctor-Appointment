@@ -1,7 +1,10 @@
 
 const DoctorList = () => {
+
   return (
-    <div>DoctorList</div>
+    <div>
+      
+    </div>
   )
 }
 

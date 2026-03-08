@@ -13,8 +13,8 @@ export const addDoctor = async(req, res) => {
         if(!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address || !imageFile){
             return res.status(400).json({success: false, message: "All details are required.."});
         }
-        console.log("BODY:", req.body);
-        console.log("FILE:", req.file);
+        //console.log("BODY:", req.body);
+        //console.log("FILE:", req.file);
         // validating email
         if(!validator.isEmail(email)){
             return res.status(400).json({success: false, message: "Enter valid email.."});
@@ -26,7 +26,7 @@ export const addDoctor = async(req, res) => {
         // ecrypt password by bcrypt using hashing
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        console.log("req.file =", req.file);
+       // console.log("req.file =", req.file);
         // upload image to cloudinary
         const imageUpload = await cloudinary.uploader.upload(imageFile.path, {resource_type:"image"});
         const imageUrl =imageUpload.secure_url;
@@ -86,3 +86,15 @@ export const adminLogin = async (req, res) => {
   }
 };
 
+// api to get all doctors list for admin
+export const allDoctors = async (req, res) => {
+  try {
+    const doctors = await doctorModel.find({}).select('-password');
+
+    res.json({success: true, doctors });
+
+  } catch (error) {
+      console.log("error from all doctors admin -> ", error);
+      res.json({success:false, message:error.message})
+  }
+}
