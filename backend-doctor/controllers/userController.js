@@ -4,7 +4,7 @@ import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 
 // api to register user
-const registerUser = async(req, res) => {
+export const registerUser = async(req, res) => {
     try {
         const {name, email, password} = req.body;
 
@@ -30,6 +30,34 @@ const registerUser = async(req, res) => {
 
         return res.json({success: true, message:"User registered successfully", token});
 
+    } catch (error) {
+        console.error("error from user controller -> ",error);
+        return res.json({success: false, message:"Internal server error"});
+    }
+}
+
+// api for user login
+
+export const loginUser = async(req, res) => {
+    try {
+        const {email, password} = req.body;
+        const user = await userModel.findOne({email});
+        if(!user){
+            res.json({success:false, message: "User does not exist.."})
+        }
+        // if user exist then match the email
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch){
+            res.json({success:false, message: "Incorrect password"})
+        }
+        // for token
+        if(isMatch){
+            const token = jwt.sign({id:user._id}, process.env.JWT_SECRET);
+            res.json({success:true, message: "Login successful", token});
+        }
+        else {
+            res.json({success:false, message: "Login failed"});
+        }
     } catch (error) {
         console.error("error from user controller -> ",error);
         return res.json({success: false, message:"Internal server error"});
