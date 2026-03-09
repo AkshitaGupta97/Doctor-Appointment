@@ -1,39 +1,22 @@
 @import "tailwindcss";
+
 * {
-  margin: 0%;
-  padding: 0%;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
+
 body{
-    background: linear-gradient(135deg, #d6dddd, #c3d2f2);
+  background: linear-gradient(135deg, #d6dddd, #c3d2f2);
 }
 
 .active hr{
-    @apply block
-}
-
-/* Hide scrollbar but keep scrolling working */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: transparent;
-}
-
-/* For Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
+  @apply block;
 }
 
 @media (max-width:740px){
   .active p{
-    @apply text-white bg-blue-700 
+    color: white;
+    background-color: #1d4ed8;
   }
 }

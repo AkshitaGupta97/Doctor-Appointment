@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
     image: {type: String, default: "https://toppng.com/public/uploads/preview/user-account-management-logo-user-icon-11562867145a56rus2zwu.png"},
     address: {type: Object, default: {line1:"", line2:""}},
     gender: {type: String, default: "Not Selected"},
-    gender: {type: String, default: "Not Selected"},
-    phone: {type: String, default: "000000000"},
+    dob: {type: String, default: "Not Selected"},
+    phone: {type: String, default: "9100000009"},
 }); 
 
 const userModel = mongoose.model('doctor', userSchema);
