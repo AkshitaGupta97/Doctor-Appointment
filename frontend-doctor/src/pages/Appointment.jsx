@@ -18,7 +18,7 @@ const Appointment = () => {
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId);
     setDocInfo(docInfo);
-    console.log(docInfo)
+    console.log("haha - ",docInfo)
   }
 
   // days of 30-minute time slots (from 10 AM to 9 PM) and stores them in docSlots.

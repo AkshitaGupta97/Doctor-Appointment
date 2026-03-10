@@ -29,19 +29,19 @@ const About = () => {
         <p>Why <span className="text-teal-800">Choose Us</span></p>
       </div>
 
-      <div className="flex flex-col gap-2 md:flex-row mb-20">
+      <div className="flex flex-col text-gray-800 gap-2 md:flex-row mb-20">
 
-        <div className="border px-8 md:px-10 sm:py-12 rounded-2xl sm:hover:bg-blue-700 sm:text-white flex flex-col gap-5 text-[15px] hover:bg-blue-600 hover:text-white transition-all duration-300 text-gray-700 cursor-pointer ">
+        <div className="border px-8 md:px-10 sm:py-12 rounded-2xl  flex flex-col gap-5 text-[15px] hover:bg-blue-600 hover:text-white transition-all duration-300 text-gray-700 cursor-pointer ">
           <b>⚡Efficiency</b>
           <p>Our doctors value your time as much as your health. With streamlined appointment scheduling, minimal waiting periods🕒</p>
         </div>
 
-        <div className="border px-8 md:px-10 sm:py-12 rounded-2xl sm:hover:bg-blue-700 sm:text-white flex flex-col gap-5 text-[15px] hover:bg-blue-600 hover:text-white transition-all duration-300 text-gray-700 cursor-pointer ">
+        <div className="border px-8 md:px-10 sm:py-12 rounded-2xl  flex flex-col gap-5 text-[15px] hover:bg-blue-600 hover:text-white transition-all duration-300 text-gray-700 cursor-pointer ">
           <b>📅 Convenience</b>
           <p>Healthcare should fit seamlessly into your busy life. That’s why we offer flexible appointment options, easy booking systems, and smooth follow-up procedures. 🏥</p>
         </div>
 
-        <div className="border px-8 md:px-10 sm:py-12 rounded-2xl sm:hover:bg-blue-700 sm:text-white flex flex-col gap-5 text-[15px] hover:bg-blue-600 hover:text-white transition-all duration-300 text-gray-700 cursor-pointer ">
+        <div className="border px-8 md:px-10 sm:py-12 rounded-2xl  flex flex-col gap-5 text-[15px] hover:bg-blue-600 hover:text-white transition-all duration-300 text-gray-700 cursor-pointer ">
           <b>🌟 Personalized Care</b>
           <p>We believe every patient is unique. 🤝 Our doctors take time to understand your medical history, lifestyle, and specific concerns</p>
         </div>

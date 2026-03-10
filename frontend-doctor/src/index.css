@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body{
   background: linear-gradient(135deg, #d6dddd, #c3d2f2);
@@ -19,4 +14,8 @@ body{
     color: white;
     background-color: #1d4ed8;
   }
+}
+
+::-webkit-scrollbar{
+  display: none;
 }
