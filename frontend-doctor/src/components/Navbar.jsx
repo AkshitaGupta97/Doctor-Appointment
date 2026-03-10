@@ -9,6 +9,12 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const {token, setToken} = useContext(AppContext);
 
+  const logout = () => {
+    setToken(false);
+    navigate('/');
+    localStorage.removeItem('token');
+  }
+
   return (
     <div className="flex items-center justify-between text-md py-4 mb-4 border-b border-gray-600  ">
       <Logo />
@@ -47,25 +53,26 @@ const Navbar = () => {
               <div className="min-w-48 bg-stone-200 rounded flex flex-col font-semibold cursor-pointer gap-4 p-4">
                 <p onClick={() => navigate('/my-profile')} className="flex items-center justify-center gap-1 hover:text-blue-800"><span className="material-symbols-outlined text-amber-800">switch_account</span> My Profile</p>
                 <p onClick={() => navigate('/my-appointment')} className="flex items-center justify-center gap-1 hover:text-blue-800"><span className="material-symbols-outlined text-amber-800">calendar_add_on</span> Appointments</p>
-                <p onClick={() => setToken(false)} className="flex items-center justify-center gap-1 hover:text-red-600"><span className="material-symbols-outlined text-amber-800">logout</span> Logout</p>
+                <p onClick={logout} className="flex items-center justify-center gap-1 hover:text-red-600"><span className="material-symbols-outlined text-amber-800">logout</span> Logout</p>
               </div>
             </div>
 
           </div>
+
             : <button onClick={() => navigate("/login")} className="bg-blue-800 text-white px-4 py-3 hover:active:scale-95 cursor-pointer rounded-full hidden md:block">
               Create Account
             </button>
         }
 
         <div>
-          <p onClick={() => setShowMenu(true)} className="md:hidden">
+          <p onClick={() => setShowMenu(true)} className="md:hidden cursor-pointer">
             <span className="material-symbols-outlined">menu</span>
           </p>
           {/* mobile */}
           <div className={` ${showMenu ? 'fixed w-full' : 'h-0 w-0'} md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all  `}>
             <div className="flex items-center justify-between px-4 py-8">
               <Logo />
-              <p onClick={() => setShowMenu(false)}><span className="material-symbols-outlined font-bold">close</span></p>
+              <p onClick={() => setShowMenu(false)}><span className="material-symbols-outlined cursor-pointer font-bold">close</span></p>
             </div>
             <ul className="flex flex-col items-center gap-3 mt-5 px-5 text-lg">
               <NavLink onClick={() => setShowMenu(false)} to="/"> <p className="px-4 py-2 rounded  inline-block">Home</p> </NavLink>

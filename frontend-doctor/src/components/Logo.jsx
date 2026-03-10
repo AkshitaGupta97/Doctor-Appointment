@@ -12,7 +12,7 @@ const Logo = () => {
           className="w-14 h-14 object-contain rounded-full shadow-lg border-2 border-blue-900 bg-white p-1 transition-transform animate-spin duration-300 hover:scale-105"
         />
       </div>
-      <p className="text-xl font-bold bg-gradient-to-r from-blue-900 via-teal-700 to-blue-800 bg-clip-text shadow-lg text-transparent tracking-wide">
+      <p className="text-xl font-bold bg-linear-to-r from-blue-900 via-teal-700 to-blue-800 bg-clip-text shadow-lg text-transparent tracking-wide">
         MediLink
       </p>
     </div>
