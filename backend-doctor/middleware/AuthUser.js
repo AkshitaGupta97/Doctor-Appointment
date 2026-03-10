@@ -6,24 +6,20 @@ export const authUser = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return res.json({ success: false, message: "Unauthorized - No Token" });
+      return res.json({ success: false, message: "Unauthorized" });
     }
 
-    // Format: Bearer token
-    const userToken = authHeader.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
-    if (!userToken) {
-      return res.json({ success: false, message: "Unauthorized - Invalid Token" });
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const decoded = jwt.verify(userToken, process.env.JWT_SECRET);
-
-    req.body.userId = decoded.id;
+    // store userId safely
+    req.userId = decoded.id;
 
     next();
 
   } catch (error) {
     console.log(error);
-    return res.json({ success: false, message: "Unauthorized - Token Failed" });
+    return res.json({ success: false, message: "Unauthorized" });
   }
 };

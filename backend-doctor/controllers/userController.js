@@ -2,6 +2,8 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
+import { v2 as cloudinary } from 'cloudinary';
+
 
 // api to register user
 export const registerUser = async (req, res) => {
@@ -38,48 +40,87 @@ export const registerUser = async (req, res) => {
 
 // api for user login
 
-export const loginUser = async(req, res) => {
+export const loginUser = async (req, res) => {
     try {
 
-        const {email, password} = req.body;
+        const { email, password } = req.body;
 
-        const user = await userModel.findOne({email});
+        const user = await userModel.findOne({ email });
 
-        if(!user){
-            return res.json({success:false, message: "User does not exist"});
+        if (!user) {
+            return res.json({ success: false, message: "User does not exist" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
-        if(!isMatch){
-            return res.json({success:false, message: "Incorrect password"});
+        if (!isMatch) {
+            return res.json({ success: false, message: "Incorrect password" });
         }
 
-        const token = jwt.sign({id:user._id}, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-        res.json({success:true, message: "Login successful", token});
+        res.json({ success: true, message: "Login successful", token });
 
-    } 
+    }
     catch (error) {
-        console.error("error from user controller -> ",error);
-        return res.json({success: false, message:"Internal server error"});
+        console.error("error from user controller -> ", error);
+        return res.json({ success: false, message: "Internal server error" });
     }
 }
 
 // api to get user profile data
-export const getProfile = async(req, res) => {
+export const getProfile = async (req, res) => {
     try {
-        const {userId} = req.body; // we get user id by token as user will send the token
+        const { userId } = req.body; // we get user id by token as user will send the token
         const user = await userModel.findById(userId).select("-password"); // we don't want to send password to frontend
-        if(!user){
-            return res.json({success:false, message: "User not found"});
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
         }
-        res.json({success:true, user});
+        res.json({ success: true, user });
 
     } catch (error) {
-        console.error("error from user controller -> ",error);
-        return res.json({success: false, message:"Internal server error"});
+        console.error("error from user controller -> ", error);
+        return res.json({ success: false, message: "Internal server error" });
     }
 }
 
+// api to update userprofile
+export const updateUserProfile = async (req, res) => {
+  try {
 
+    const { name, email, phone, dob, gender } = req.body || {};
+    const userId = req.userId;
+    const imageFile = req.file;
+
+    const address = {
+      line1: req.body?.["address[line1]"],
+      line2: req.body?.["address[line2]"]
+    };
+
+    if (!name || !email || !phone || !dob || !gender || !address.line1 || !address.line2) {
+      return res.json({ success: false, message: "All fields are required" });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.json({ success: false, message: "Invalid email" });
+    }
+
+    let updateData = { name, email, phone, address, dob, gender };
+
+    if (imageFile) {
+      const imageUpload = await cloudinary.uploader.upload(
+        imageFile.path,
+        { resource_type: "image" }
+      );
+      updateData.image = imageUpload.secure_url;
+    }
+
+    await userModel.findByIdAndUpdate(userId, updateData);
+
+    res.json({ success: true, message: "Profile updated successfully" });
+
+  } catch (error) {
+    console.error("error from user controller -> ", error);
+    return res.json({ success: false, message: "Internal server error" });
+  }
+};
