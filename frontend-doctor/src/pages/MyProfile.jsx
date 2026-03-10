@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { useState } from "react"
+import { AppContext } from "../context/AppContext";
 
 const MyProfile = () => {
 
-  const [userData, setUserData] = useState({
+ /* const [userData, setUserData] = useState({
     name: "abc",
     image: "https://wallpapercave.com/wp/wp3487952.png",
     email: "abc@gmail.com",
@@ -13,7 +15,9 @@ const MyProfile = () => {
     },
     gender: 'Male',
     dob: '2004-03-12'
-  });
+  });*/
+
+  const {userData, setUserData} = useContext(AppContext);
 
   const [isEdit, setIsEdit] = useState(true);
 
