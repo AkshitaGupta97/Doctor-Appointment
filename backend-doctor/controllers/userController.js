@@ -66,5 +66,20 @@ export const loginUser = async(req, res) => {
     }
 }
 
+// api to get user profile data
+export const getProfile = async(req, res) => {
+    try {
+        const {userId} = req.body; // we get user id by token as user will send the token
+        const user = await userModel.findById(userId).select("-password"); // we don't want to send password to frontend
+        if(!user){
+            return res.json({success:false, message: "User not found"});
+        }
+        res.json({success:true, user});
+
+    } catch (error) {
+        console.error("error from user controller -> ",error);
+        return res.json({success: false, message:"Internal server error"});
+    }
+}
 
 
