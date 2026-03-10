@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -52,6 +52,12 @@ const Login = () => {
       toast.error("Failed to submit form");
     }
   }
+
+  useEffect(() => {
+    if(token){
+      navigate('/');
+    }
+  }, [token]);
 
   return (
     <form onSubmit={onSubmitHandler} className="min-h-[80vh]  flex items-center">
