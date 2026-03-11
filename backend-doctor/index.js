@@ -12,8 +12,8 @@ const port = process.env.PORT || 4000;
 
 // middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
 // routes
 app.use('/api/admin', adminRouter);
 app.use('/api/doctors', doctorRouter);

@@ -71,57 +71,76 @@ export const loginUser = async (req, res) => {
 // api to get user profile data
 export const getProfile = async (req, res) => {
     try {
-        const  userId = req.body; // we get user id by token as user will send the token
-        const user = await userModel.findById(userId).select("-password"); // we don't want to send password to frontend
+
+        const userId = req.userId;
+
+        console.log("UserId from token:", userId);
+
+        const user = await userModel
+            .findById(userId)
+            .select("-password");
+
         if (!user) {
-            return res.json({ success: false, message: "User not found" });
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
         }
-        res.json({ success: true, user });
+
+        res.json({
+            success: true,
+            user
+        });
+
+    } catch (error) {
+        console.log("getProfile error:", error);
+        res.json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
+
+// api to update userprofile
+export const updateUserProfile = async (req, res) => {
+    try {
+
+        const { name, phone, dob, gender } = req.body || {};
+        const userId = req.userId;
+        const imageFile = req.file;
+
+        const address = {
+            line1: req.body["address[line1]"] || "",
+            line2: req.body["address[line2]"] || ""
+        };
+
+        if (!name || !phone || !address.line1 || !address.line2) {
+            return res.json({ success: false, message: "All fields are required" });
+        }
+        
+        console.log("REQ BODY:", req.body);
+        console.log("REQ FILE:", req.file);
+        console.log("UserId from token:", req.userId);
+        /* if (!validator.isEmail(email)) {
+           return res.json({ success: false, message: "Invalid email" });
+         }
+     */
+        let updateData = { name, phone, address, dob, gender };
+
+        if (imageFile) {
+            const imageUpload = await cloudinary.uploader.upload(
+                imageFile.path,
+                { resource_type: "image" }
+            );
+            updateData.image = imageUpload.secure_url;
+        }
+
+        await userModel.findByIdAndUpdate(userId, updateData);
+
+        res.json({ success: true, message: "Profile updated successfully" });
 
     } catch (error) {
         console.error("error from user controller -> ", error);
         return res.json({ success: false, message: "Internal server error" });
     }
-}
-
-// api to update userprofile
-export const updateUserProfile = async (req, res) => {
-  try {
-
-    const { name, phone, dob, gender } = req.body || {};
-    const userId = req.userId;
-    const imageFile = req.file;
-
-    const address = {
-      line1: req.body?.["address[line1]"],
-      line2: req.body?.["address[line2]"]
-    };
-
-    if (!name  || !phone || !dob || !gender || !address.line1 || !address.line2) {
-      return res.json({ success: false, message: "All fields are required" });
-    }
-    
-    console.log("UserId from token:", req.userId);
-   /* if (!validator.isEmail(email)) {
-      return res.json({ success: false, message: "Invalid email" });
-    }
-*/
-    let updateData = { name, phone, address, dob, gender };
-
-    if (imageFile) {
-      const imageUpload = await cloudinary.uploader.upload(
-        imageFile.path,
-        { resource_type: "image" }
-      );
-      updateData.image = imageUpload.secure_url;
-    }
-
-    await userModel.findByIdAndUpdate(userId, updateData);
-
-    res.json({ success: true, message: "Profile updated successfully" });
-
-  } catch (error) {
-    console.error("error from user controller -> ", error);
-    return res.json({ success: false, message: "Internal server error" });
-  }
 };

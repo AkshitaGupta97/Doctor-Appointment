@@ -10,31 +10,45 @@ const MyProfile = () => {
 
   const updateUserProfileData = async () => {
     try {
+
       const formData = new FormData();
       formData.append("name", userData.name);
       formData.append("phone", userData.phone);
       formData.append("dob", userData.dob);
-      formData.append("address", JSON.stringify(userData.address));
       formData.append("gender", userData.gender);
 
-      image && formData.append("image", image);
+      formData.append("address[line1]", userData.address.line1);
+      formData.append("address[line2]", userData.address.line2);
 
-      const { data } = await axios.post(`${backendUrl}/api/user/update-profile`, formData, { headers: { Authorization: `Bearer ${token}` } });
-      console.log("update profile response", data);
-      if (data.success) {
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/update-profile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if(data.success){
         toast.success(data.message);
-        await loadUserProfileData();
+        loadUserProfileData();
         setIsEdit(false);
         setImage(false);
       }
-      else {
+      else{
         toast.error(data.message);
       }
+
+      console.log("update profile response", data);
+
     } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      console.log(error);
     }
-  }
+  };
 
   /* const [userData, setUserData] = useState({
       name: "abc",
@@ -171,11 +185,18 @@ const MyProfile = () => {
           <p>Date of Birth: </p>
           {isEdit ? (
             <input
-              className="bg-gray-400 px-0.5 py-1 text-lg max-w-60 mt-4 outline-none rounded-xl"
               type="date"
-              value={userData?.dob || ""}
+              className="bg-gray-400 px-0.5 py-1 text-lg max-w-60 mt-4 outline-none rounded-xl"
+              value={
+                userData?.dob && userData.dob !== "Not Selected"
+                  ? userData.dob
+                  : ""
+              }
               onChange={(e) =>
-                setUserData((prev) => ({ ...prev, dob: e.target.value }))
+                setUserData((prev) => ({
+                  ...prev,
+                  dob: e.target.value,
+                }))
               }
             />
           ) : (
