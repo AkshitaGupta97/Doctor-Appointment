@@ -101,46 +101,41 @@ export const getProfile = async (req, res) => {
     }
 };
 
-// api to update userprofile
+// api to update user profile
 export const updateUserProfile = async (req, res) => {
     try {
-
         const { name, phone, dob, gender } = req.body || {};
         const userId = req.userId;
         const imageFile = req.file;
 
+        // Parse address fields safely
         const address = {
             line1: req.body["address[line1]"] || "",
             line2: req.body["address[line2]"] || ""
         };
 
-        if (!name || !phone || !address.line1 || !address.line2) {
-            return res.json({ success: false, message: "All fields are required" });
+        // Validate only the truly required fields
+        if (!name?.trim() || !phone?.trim()) {
+            return res.status(400).json({ success: false, message: "Name and phone are required" });
         }
-        
-        console.log("REQ BODY:", req.body);
-        console.log("REQ FILE:", req.file);
-        console.log("UserId from token:", req.userId);
-        /* if (!validator.isEmail(email)) {
-           return res.json({ success: false, message: "Invalid email" });
-         }
-     */
-        let updateData = { name, phone, address, dob, gender };
+
+        // Build update object dynamically
+        let updateData = { name, phone };
+
+        if (dob) updateData.dob = dob;
+        if (gender) updateData.gender = gender;
+        if (address.line1 || address.line2) updateData.address = address;
 
         if (imageFile) {
-            const imageUpload = await cloudinary.uploader.upload(
-                imageFile.path,
-                { resource_type: "image" }
-            );
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
             updateData.image = imageUpload.secure_url;
         }
 
-        await userModel.findByIdAndUpdate(userId, updateData);
+        await userModel.findByIdAndUpdate(userId, updateData, { new: true });
 
         res.json({ success: true, message: "Profile updated successfully" });
-
     } catch (error) {
         console.error("error from user controller -> ", error);
-        return res.json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
