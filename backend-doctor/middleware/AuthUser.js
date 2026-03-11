@@ -5,21 +5,47 @@ export const authUser = async (req, res, next) => {
 
     const authHeader = req.headers.authorization;
 
+    // check header exists
     if (!authHeader) {
-      return res.json({ success: false, message: "Unauthorized" });
+      return res.json({
+        success: false,
+        message: "Authorization header missing"
+      });
     }
 
-    const token = authHeader.split(" ")[1];
+    // check Bearer token format
+    const tokenParts = authHeader.split(" ");
 
+    if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+      return res.json({
+        success: false,
+        message: "Invalid token format"
+      });
+    }
+
+    const token = tokenParts[1];
+
+    // verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // store userId safely
+    if (!decoded?.id) {
+      return res.json({
+        success: false,
+        message: "Invalid token payload"
+      });
+    }
+
+    // attach userId
     req.userId = decoded.id;
 
     next();
 
   } catch (error) {
-    console.log(error);
-    return res.json({ success: false, message: "Unauthorized" });
+    console.log("Auth Middleware Error:", error.message);
+
+    return res.json({
+      success: false,
+      message: "Unauthorized"
+    });
   }
 };

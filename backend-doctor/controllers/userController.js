@@ -71,7 +71,7 @@ export const loginUser = async (req, res) => {
 // api to get user profile data
 export const getProfile = async (req, res) => {
     try {
-        const { userId } = req.body; // we get user id by token as user will send the token
+        const  userId = req.body; // we get user id by token as user will send the token
         const user = await userModel.findById(userId).select("-password"); // we don't want to send password to frontend
         if (!user) {
             return res.json({ success: false, message: "User not found" });
@@ -88,7 +88,7 @@ export const getProfile = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   try {
 
-    const { name, email, phone, dob, gender } = req.body || {};
+    const { name, phone, dob, gender } = req.body || {};
     const userId = req.userId;
     const imageFile = req.file;
 
@@ -97,15 +97,16 @@ export const updateUserProfile = async (req, res) => {
       line2: req.body?.["address[line2]"]
     };
 
-    if (!name || !email || !phone || !dob || !gender || !address.line1 || !address.line2) {
+    if (!name  || !phone || !dob || !gender || !address.line1 || !address.line2) {
       return res.json({ success: false, message: "All fields are required" });
     }
-
-    if (!validator.isEmail(email)) {
+    
+    console.log("UserId from token:", req.userId);
+   /* if (!validator.isEmail(email)) {
       return res.json({ success: false, message: "Invalid email" });
     }
-
-    let updateData = { name, email, phone, address, dob, gender };
+*/
+    let updateData = { name, phone, address, dob, gender };
 
     if (imageFile) {
       const imageUpload = await cloudinary.uploader.upload(
