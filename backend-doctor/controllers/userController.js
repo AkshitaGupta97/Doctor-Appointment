@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
+import doctorModel from '../models/doctorModel.js';
+import appointmentModel from '../models/AppointmentModel.js';
 
 
 // api to register user
@@ -139,3 +141,60 @@ export const updateUserProfile = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
+// book appointment with the doctor
+export const bookAppointment = async (req, res) => {
+    try {
+        const { slotDate, slotTime, doctorId  } = req.body;
+        const userId = req.userId;
+        
+        if (!doctorId || !slotDate || !slotTime) {
+            return res.json({ success: false, message: "All fields are required" });
+        }
+
+        const docData = await doctorModel.findById(doctorId).select('-password');
+
+        if(!docData.available){
+            return res.json({ success: false, message: "Doctor is Unavailable" });
+        }
+
+        let slots_booked = docData.slots_booked;
+
+        // check slot availability,
+        // as if in slot Date if time is already booked then you cannot book 
+        if(slots_booked[slotDate]){
+            if(slots_booked[slotDate].includes(slotTime)){
+                return res.json({ success: false, message: "Slot is Unavailable" });
+            }
+            else {  // it time is not included  then you book time
+                slots_booked[slotDate].push(slotTime);
+            }
+        }
+        // else slotDate is not booked, means on that particular date  one has booked then you may book appointment
+        else {
+            slots_booked[slotDate] = []
+            slots_booked[slotDate].push(slotTime);
+        }
+
+        const userData = await userModel.findById(userId).select('-password');
+
+        delete docData.slots_booked; // we are removing because, when we save our appointment , then we save docData and we don't want the history of slotsBooked
+
+        const appointmentData = {
+            userId, doctorId, userData, docData, amount:docData.fees, slotTime, slotDate, date:Date.now()
+        }
+        const newAppointment = new appointmentModel(appointmentData);
+        await newAppointment.save();
+
+        // save new slots data in doctor data
+
+        await doctorModel.findByIdAndUpdate(doctorId, {slots_booked});
+
+        res.json({success:true, message: "Appointment Booked."});
+
+    } catch (error) {
+        console.error("error from user controller -> ", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
