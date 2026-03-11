@@ -7,7 +7,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const {token, setToken} = useContext(AppContext);
+  const { token, setToken, userData } = useContext(AppContext);
 
   const logout = () => {
     setToken(false);
@@ -42,11 +42,24 @@ const Navbar = () => {
       <div className="flex items-center gap-2">
         {
           token ? <div className="flex items-center justify-center gap-2 group relative">
-            <span className="material-symbols-outlined 
-                        text-blue-700 bg-clip-text text-5xl drop-shadow-md  cursor-pointer
-                        shadow-lg rounded transition-transform duration-300 hover:scale-110 hover:drop-shadow-xl" style={{ fontSize: "36px" }}>
-              account_circle
-            </span>
+            <>
+              {userData?.image ? (
+                <img
+                  className="w-12 h-12 rounded-full"
+                  src={userData?.image}
+                  alt={userData?.name || "profile"}
+                />
+              ) : (
+                <span
+                  className="material-symbols-outlined 
+                 text-blue-700 bg-clip-text text-5xl drop-shadow-md cursor-pointer
+                 shadow-lg rounded transition-transform duration-300 hover:scale-110 hover:drop-shadow-xl"
+                  style={{ fontSize: "36px" }}
+                >
+                  account_circle
+                </span>
+              )}
+            </>
             <span className="material-symbols-outlined text-emerald-700 cursor-pointer" style={{ fontSize: "32px" }}>arrow_drop_down</span>
 
             <div className="absolute top-0 right-0 pt-12 text-base font-medium text-gray-700 z-20 hidden group-hover:block">

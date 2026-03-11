@@ -131,7 +131,7 @@ export const updateUserProfile = async (req, res) => {
             updateData.image = imageUpload.secure_url;
         }
 
-        await userModel.findByIdAndUpdate(userId, updateData, { new: true });
+       await userModel.findByIdAndUpdate(userId, updateData, { returnDocument: 'after' });
 
         res.json({ success: true, message: "Profile updated successfully" });
     } catch (error) {
