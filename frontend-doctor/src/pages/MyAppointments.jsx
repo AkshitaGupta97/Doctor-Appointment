@@ -1,27 +1,50 @@
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
+import axios from 'axios';
 
 const MyAppointments = () => {
-  const {doctors} = useContext(AppContext);
+  const { doctors, backendUrl, token } = useContext(AppContext);
+  const [appointments, setAppointments] = useState([]);
+
+  const getUserAppointments = async (req, res) => {
+    try {
+      const { data } = await axios.get(backendUrl + '/api/user/appointments', { headers: { Authorization: `Bearer ${token}` }, });
+      if (data.success) {
+        setAppointments(data.appointments.reverse()); // get data in reverse order
+        console.log(data.appointments);
+      }
+    } catch (error) {
+      console.log("error from my-appoinment", error);
+      toast.error(error.message);
+    }
+  }
+
+  useEffect(() => {
+    if (token) {
+      getUserAppointments();
+    }
+  }, [token]);
+
   return (
     <div>
       <p className="pb-3 mt-12 font-medium text-amber-800 text-xl border-b border-b-blue-700  ">My Appointments</p>
 
       <div className="mt-4">
         {
-          doctors.slice(0,4).map((item, idx) => (
+          appointments.map((item, idx) => (
             <div key={idx} className="grid grid-cols-[1fr_3fr] gap-4 sm:flex sm:gap-6 py-2 border-b ">
               <div>
-                <img className="w-32 bg-indigo-400 rounded-2xl" src={item?.image} alt={item?.name} />
+                <img className="w-32 bg-indigo-400 rounded-2xl" src={item.doctorData?.image} alt={item?.name} />
               </div>
               <div className="flex-1 text-gray-700">
-                <p className="text-lg text-amber-700">{item?.name}</p>
-                <p className="text-teal-800">{item?.speciality}</p>
+                <p className="text-lg text-amber-700">{item.doctorData?.name}</p>
+                <p className="text-teal-800">{item.doctorData?.speciality}</p>
                 <p className="text-zinc-800 mt-1">Address: </p>
-                <p className="text-sm text-blue-800">{item?.address.line1}</p>
-                <p className="text-sm text-blue-800">{item?.address.line2}</p>
-                <p><span className="text-blue-500 mt-2">Date & Time:</span> 3, march, 2026 | 4:27 pm</p>
-                
+                <p className="text-sm text-blue-800">{item.doctorData?.address.line1}</p>
+                <p className="text-sm text-blue-800">{item.doctorData?.address.line2}</p>
+                <p><span className="text-blue-500 mt-2">Date & Time:</span> {item?.slotDate} | {item?.slotTime} </p>
+
               </div>
 
               <div> </div>

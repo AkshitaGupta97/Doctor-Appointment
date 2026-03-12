@@ -133,7 +133,7 @@ export const updateUserProfile = async (req, res) => {
             updateData.image = imageUpload.secure_url;
         }
 
-       await userModel.findByIdAndUpdate(userId, updateData, { returnDocument: 'after' });
+        await userModel.findByIdAndUpdate(userId, updateData, { returnDocument: 'after' });
 
         res.json({ success: true, message: "Profile updated successfully" });
     } catch (error) {
@@ -142,72 +142,89 @@ export const updateUserProfile = async (req, res) => {
     }
 };
 
+// api to get user appointments for frontend my appointment page
+
+export const listAppointment = async (req, res) => {
+    try {
+        // ✅ userId should come from auth middleware (decoded JWT)
+        const userId = req.userId;
+
+        // ✅ use find, not findById
+        const appointments = await appointmentModel.find({ userId });
+
+        res.json({ success: true, appointments });
+    } catch (error) {
+        console.error("error from user controller -> ", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 // book appointment with the doctor
 export const bookAppointment = async (req, res) => {
-  try {
-    const { slotDate, slotTime, doctorId } = req.body;
-    const userId = req.userId;
+    try {
+        const { slotDate, slotTime, doctorId } = req.body;
+        const userId = req.userId;
 
-    if (!doctorId || !slotDate || !slotTime) {
-      return res.json({ success: false, message: "All fields are required" });
+        if (!doctorId || !slotDate || !slotTime) {
+            return res.json({ success: false, message: "All fields are required" });
+        }
+
+        // Fetch doctor data
+        const docData = await doctorModel.findById(doctorId).select("-password");
+        if (!docData) {
+            return res.json({ success: false, message: "Doctor not found" });
+        }
+
+        if (!docData.available) {
+            return res.json({ success: false, message: "Doctor is Unavailable" });
+        }
+
+        let slots_booked = docData.slots_booked || {};
+
+        // Check slot availability
+        if (slots_booked[slotDate]) {
+            if (slots_booked[slotDate].includes(slotTime)) {
+                return res.json({ success: false, message: "Slot is Unavailable" });
+            } else {
+                slots_booked[slotDate].push(slotTime);
+            }
+        } else {
+            slots_booked[slotDate] = [slotTime];
+        }
+
+        // Fetch user data
+        const userData = await userModel.findById(userId).select("-password");
+        if (!userData) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        // Strip out slots_booked before saving doctorData into appointment
+        const { slots_booked: _, ...doctorData } = docData.toObject();
+
+        // Build appointment object
+        const appointmentData = {
+            userId,
+            doctorId,
+            userData,
+            doctorData, // ✅ matches schema
+            amount: docData.fees,
+            slotTime,
+            slotDate,
+            date: Date.now(),
+        };
+
+        // Save appointment
+        const newAppointment = new appointmentModel(appointmentData);
+        await newAppointment.save();
+
+        // Update doctor slots
+        await doctorModel.findByIdAndUpdate(doctorId, { slots_booked });
+
+        res.json({ success: true, message: "Appointment Booked." });
+    } catch (error) {
+        console.error("error from user controller -> ", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
-
-    // Fetch doctor data
-    const docData = await doctorModel.findById(doctorId).select("-password");
-    if (!docData) {
-      return res.json({ success: false, message: "Doctor not found" });
-    }
-
-    if (!docData.available) {
-      return res.json({ success: false, message: "Doctor is Unavailable" });
-    }
-
-    let slots_booked = docData.slots_booked || {};
-
-    // Check slot availability
-    if (slots_booked[slotDate]) {
-      if (slots_booked[slotDate].includes(slotTime)) {
-        return res.json({ success: false, message: "Slot is Unavailable" });
-      } else {
-        slots_booked[slotDate].push(slotTime);
-      }
-    } else {
-      slots_booked[slotDate] = [slotTime];
-    }
-
-    // Fetch user data
-    const userData = await userModel.findById(userId).select("-password");
-    if (!userData) {
-      return res.json({ success: false, message: "User not found" });
-    }
-
-    // Strip out slots_booked before saving doctorData into appointment
-    const { slots_booked: _, ...doctorData } = docData.toObject();
-
-    // Build appointment object
-    const appointmentData = {
-      userId,
-      doctorId,
-      userData,
-      doctorData, // ✅ matches schema
-      amount: docData.fees,
-      slotTime,
-      slotDate,
-      date: Date.now(),
-    };
-
-    // Save appointment
-    const newAppointment = new appointmentModel(appointmentData);
-    await newAppointment.save();
-
-    // Update doctor slots
-    await doctorModel.findByIdAndUpdate(doctorId, { slots_booked });
-
-    res.json({ success: true, message: "Appointment Booked." });
-  } catch (error) {
-    console.error("error from user controller -> ", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
 };
 
 /**is using JavaScript object destructuring with a little trick:

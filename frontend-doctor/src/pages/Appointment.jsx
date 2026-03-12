@@ -131,7 +131,6 @@ const Appointment = () => {
   }, [docSlots]);
 
   
-
   return (
     <div>
       {/* doctor details */}
