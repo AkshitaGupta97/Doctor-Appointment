@@ -1,13 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { AppContext } from "../context/AppContext";
 import RelatedDoctors from "../components/RelatedDoctors";
+import { toast } from "react-toastify";
+import axios from 'axios';
 
 const Appointment = () => {
 
   const { docId } = useParams();
-  const { doctors } = useContext(AppContext);
+  const { doctors, getAllDoctors, backendUrl, token } = useContext(AppContext);
   const [docInfo, setDocInfo] = useState(null);
+  const navigate = useNavigate();
 
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(1);
@@ -18,7 +21,7 @@ const Appointment = () => {
   const fetchDocInfo = async () => {
     const docInfo = doctors.find(doc => doc._id === docId);
     setDocInfo(docInfo);
-    console.log("haha - ",docInfo)
+   // console.log("haha - ", docInfo)
   }
 
   // days of 30-minute time slots (from 10 AM to 9 PM) and stores them in docSlots.
@@ -66,6 +69,44 @@ const Appointment = () => {
       }
       setDocSlots(prev => ([...prev, timeSlots]));
 
+    }
+  }
+
+  const bookAppointment = async (req, res) => {
+    if (!token) {
+      toast.warn("Login to book appointment");
+      return navigate('/login');
+    }
+    try {
+      const date = docSlots[slotIndex][0].datetime;
+
+      let day = date.getDate();
+      let month = date.getMonth()+1;  // for jan -> 1, feb-2 so on...
+      let year = date.getFullYear();
+
+      const slotDate = day + '_' + month + '_' + year
+      console.log("date -> ", slotDate);
+
+      const {data} = await axios.post(backendUrl + "/api/user/book-appointment", {
+        doctorId: docId,
+        slotTime,
+        slotDate
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if(data.success){
+        toast.success(data.message);
+        getAllDoctors(); // to update the slots data of doctor after booking appointment
+        navigate('/my-appointment');
+      }
+      else{
+        toast.error(data.message);
+      }
+
+    } catch (error) {
+      console.log("Error in appointment", error);
+      toast.error("Failed to book appointment");
     }
   }
 
@@ -128,8 +169,8 @@ const Appointment = () => {
         <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4">
           {
             docSlots.length && docSlots.map((item, index) => (
-              <div key={index}  onClick={() => {setSlotIndex(index); setSlotTime(''); }}// optional: reset selected time when day changes
-                className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${slotIndex === index ? "bg-teal-900 text-white":"border-gray-800 "}`} >
+              <div key={index} onClick={() => { setSlotIndex(index); setSlotTime(''); }}// optional: reset selected time when day changes
+                className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${slotIndex === index ? "bg-teal-900 text-white" : "border-gray-800 "}`} >
                 <p>{item[0] && daysOfWeek[item[0].datetime.getDay()]}</p>
                 <p>{item[0] && item[0].datetime.getDate()}</p>
               </div>
@@ -140,14 +181,17 @@ const Appointment = () => {
         <div className="flex items-center gap-3 w-full overflow-x-scroll mt-4">
           {
             docSlots.length && docSlots[slotIndex].map((item, idx) => (
-              <p onClick={() => setSlotTime(item.time)} className={`text-sm shrink-0 px-5 py-2 rounded-full cursor-pointer ${item.time === slotTime ? "bg-blue-700 text-white" :"text-gray-600 border border-gray-700 "}`} key={idx}>
+              <p onClick={() => setSlotTime(item.time)} className={`text-sm shrink-0 px-5 py-2 rounded-full cursor-pointer ${item.time === slotTime ? "bg-blue-700 text-white" : "text-gray-600 border border-gray-700 "}`} key={idx}>
                 {item.time.toLowerCase()}
               </p>
             ))
           }
         </div>
 
-        <button className="bg-teal-800 text-white rounded-full px-2 py-2 cursor-pointer mt-4 items-center justify-center hover:scale-105 transition-all ">Book Apointment</button>
+        <button onClick={bookAppointment}
+          className="bg-teal-800 text-white rounded-full px-2 py-2 cursor-pointer mt-4 items-center justify-center hover:scale-105 transition-all ">
+          Book Apointment
+        </button>
       </div>
 
       {/* listing related doctors */}

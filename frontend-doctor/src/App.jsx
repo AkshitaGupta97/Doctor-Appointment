@@ -9,6 +9,8 @@ import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
 import Contact from './pages/Contact'
 import Footer from './components/Footer'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
@@ -31,6 +33,10 @@ function App() {
       </Routes>
 
       <Footer />
+
+      {/* 👇 This is required */}
+      <ToastContainer />
+
       
     </div>
   )
