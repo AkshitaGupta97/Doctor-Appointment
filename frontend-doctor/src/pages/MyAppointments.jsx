@@ -4,8 +4,14 @@ import { toast } from "react-toastify";
 import axios from 'axios';
 
 const MyAppointments = () => {
-  const { doctors, backendUrl, token } = useContext(AppContext);
+  const {  backendUrl, token } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
+  const months = ['','Jan', 'Feb', "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const slotDateFormat = (slotDate) => {
+    const dateArray = slotDate.split('_');
+    return dateArray[0] +" "+ months[Number(dateArray[1])] + " " + dateArray[2];
+  }
 
   const getUserAppointments = async (req, res) => {
     try {
@@ -43,7 +49,7 @@ const MyAppointments = () => {
                 <p className="text-zinc-800 mt-1">Address: </p>
                 <p className="text-sm text-blue-800">{item.doctorData?.address.line1}</p>
                 <p className="text-sm text-blue-800">{item.doctorData?.address.line2}</p>
-                <p><span className="text-blue-500 mt-2">Date & Time:</span> {item?.slotDate} | {item?.slotTime} </p>
+                <p><span className="text-blue-500 mt-2">Date & Time:</span> {slotDateFormat(item?.slotDate)} | {item?.slotTime} </p>
 
               </div>
 
