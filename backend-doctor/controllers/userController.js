@@ -144,57 +144,90 @@ export const updateUserProfile = async (req, res) => {
 
 // book appointment with the doctor
 export const bookAppointment = async (req, res) => {
-    try {
-        const { slotDate, slotTime, doctorId  } = req.body;
-        const userId = req.userId;
-        
-        if (!doctorId || !slotDate || !slotTime) {
-            return res.json({ success: false, message: "All fields are required" });
-        }
+  try {
+    const { slotDate, slotTime, doctorId } = req.body;
+    const userId = req.userId;
 
-        const docData = await doctorModel.findById(doctorId).select('-password');
-
-        if(!docData.available){
-            return res.json({ success: false, message: "Doctor is Unavailable" });
-        }
-
-        let slots_booked = docData.slots_booked;
-
-        // check slot availability,
-        // as if in slot Date if time is already booked then you cannot book 
-        if(slots_booked[slotDate]){
-            if(slots_booked[slotDate].includes(slotTime)){
-                return res.json({ success: false, message: "Slot is Unavailable" });
-            }
-            else {  // it time is not included  then you book time
-                slots_booked[slotDate].push(slotTime);
-            }
-        }
-        // else slotDate is not booked, means on that particular date  one has booked then you may book appointment
-        else {
-            slots_booked[slotDate] = []
-            slots_booked[slotDate].push(slotTime);
-        }
-
-        const userData = await userModel.findById(userId).select('-password');
-
-        delete docData.slots_booked; // we are removing because, when we save our appointment , then we save docData and we don't want the history of slotsBooked
-
-        const appointmentData = {
-            userId, doctorId, userData, docData, amount:docData.fees, slotTime, slotDate, date:Date.now()
-        }
-        const newAppointment = new appointmentModel(appointmentData);
-        await newAppointment.save();
-
-        // save new slots data in doctor data
-
-        await doctorModel.findByIdAndUpdate(doctorId, {slots_booked});
-
-        res.json({success:true, message: "Appointment Booked."});
-
-    } catch (error) {
-        console.error("error from user controller -> ", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+    if (!doctorId || !slotDate || !slotTime) {
+      return res.json({ success: false, message: "All fields are required" });
     }
-}
 
+    // Fetch doctor data
+    const docData = await doctorModel.findById(doctorId).select("-password");
+    if (!docData) {
+      return res.json({ success: false, message: "Doctor not found" });
+    }
+
+    if (!docData.available) {
+      return res.json({ success: false, message: "Doctor is Unavailable" });
+    }
+
+    let slots_booked = docData.slots_booked || {};
+
+    // Check slot availability
+    if (slots_booked[slotDate]) {
+      if (slots_booked[slotDate].includes(slotTime)) {
+        return res.json({ success: false, message: "Slot is Unavailable" });
+      } else {
+        slots_booked[slotDate].push(slotTime);
+      }
+    } else {
+      slots_booked[slotDate] = [slotTime];
+    }
+
+    // Fetch user data
+    const userData = await userModel.findById(userId).select("-password");
+    if (!userData) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    // Strip out slots_booked before saving doctorData into appointment
+    const { slots_booked: _, ...doctorData } = docData.toObject();
+
+    // Build appointment object
+    const appointmentData = {
+      userId,
+      doctorId,
+      userData,
+      doctorData, // ✅ matches schema
+      amount: docData.fees,
+      slotTime,
+      slotDate,
+      date: Date.now(),
+    };
+
+    // Save appointment
+    const newAppointment = new appointmentModel(appointmentData);
+    await newAppointment.save();
+
+    // Update doctor slots
+    await doctorModel.findByIdAndUpdate(doctorId, { slots_booked });
+
+    res.json({ success: true, message: "Appointment Booked." });
+  } catch (error) {
+    console.error("error from user controller -> ", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+/**is using JavaScript object destructuring with a little trick:
+- docData.toObject() converts the Mongoose document into a plain JavaScript object.
+(Mongoose documents have extra methods and metadata; converting them makes it easier to manipulate.)
+- { slots_booked: _, ...doctorData } means:
+- Take the property slots_booked out of the object and assign it to a variable named _ (we don’t actually use it, so _ is just a throwaway).
+- Collect all the remaining properties into a new object called doctorData.
+So effectively, this line removes the slots_booked field from the doctor object and keeps everything else in doctorData.
+{
+  _id: "123",
+  name: "Dr. Sharma",
+  speciality: "Cardiology",
+  fees: 500,
+  slots_booked: { "12_3_2026": ["10:00 AM"] }
+} after destructuring becomes
+  doctorData = {
+  _id: "123",
+  name: "Dr. Sharma",
+  speciality: "Cardiology",
+  fees: 500
+}
+ */
