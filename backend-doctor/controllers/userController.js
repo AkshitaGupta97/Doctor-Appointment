@@ -159,6 +159,46 @@ export const listAppointment = async (req, res) => {
     }
 };
 
+// api to cancel appointment
+export const cancelAppointment = async (req, res) => {
+    try {
+        const userId = req.userId; // comes from JWT middleware
+        const { appointmentId } = req.body;
+
+        // find appointment by its _id
+        const appointmentData = await appointmentModel.findById(appointmentId);
+        if (!appointmentData) {
+            return res.json({ success: false, message: "Appointment not found" });
+        }
+
+        // verify appointment belongs to user
+        if (appointmentData.userId.toString() !== userId) {
+            return res.json({ success: false, message: "Unauthorized" });
+        }
+
+        // mark appointment as cancelled
+        await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true });
+
+        // release doctor slot
+        const { doctorId, slotDate, slotTime } = appointmentData;
+
+        const doctorData = await doctorModel.findById(doctorId);
+        let slots_booked = doctorData.slots_booked || {};
+
+        if (slots_booked[slotDate]) {
+            slots_booked[slotDate] = slots_booked[slotDate].filter(time => time !== slotTime);
+        }
+
+        await doctorModel.findByIdAndUpdate(doctorId, { slots_booked });
+
+        res.json({ success: true, message: "Appointment cancelled successfully" });
+        
+    } catch (error) {
+        console.error("error from user controller -> ", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 // book appointment with the doctor
 export const bookAppointment = async (req, res) => {
     try {
