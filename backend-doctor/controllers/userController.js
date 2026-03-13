@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js';
 import appointmentModel from '../models/AppointmentModel.js';
-
+import razorpay from 'razorpay';
 
 // api to register user
 export const registerUser = async (req, res) => {
@@ -76,7 +76,7 @@ export const getProfile = async (req, res) => {
 
         const userId = req.userId;
 
-        console.log("UserId from token:", userId);
+        //   console.log("UserId from token:", userId);
 
         const user = await userModel
             .findById(userId)
@@ -201,6 +201,39 @@ export const cancelAppointment = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
+// RAZOR PAY payment method
+const razorpayInstance = new razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+});
+
+export const paymentRazorpay = async(req, res) => {
+    try {
+        const { appointmentId } = req.body;
+        const appointmentData = await appointmentModel.findById(appointmentId);
+
+        if (!appointmentData || appointmentData.cancelled) {
+            return res.json({ success: false, message: "Appointment canelled or not found" })
+        }
+
+        // creating option for razorpay payment
+        const options = {
+            amount: appointmentData.amount * 100,  // *100 it will remove two decimal places
+            currency: process.env.CURRENCY,
+            receipt: appointmentId
+        }
+
+        // creation of an order
+        const order = await razorpayInstance.orders.create(options);
+
+        res.json({ success: true, order });
+        
+    } catch (error) {
+        console.error("error from user controller -> ", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
 
 // book appointment with the doctor
 export const bookAppointment = async (req, res) => {

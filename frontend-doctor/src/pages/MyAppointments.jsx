@@ -49,6 +49,19 @@ const MyAppointments = () => {
     }
   };
 
+  // razorpay
+  const appointmentRazorpay = async(appointmentId) => {
+    try {
+      const {data} = await axios.post(backendUrl+'/api/user/payment-razorpay', {appointmentId}, { headers: { Authorization: `Bearer ${token}` } } );
+      if(data.success){
+        console.log("abcc ", data.order)
+      }
+    } catch (error) {
+      console.error("error from my-appointment", error);
+      toast.error(error.message);
+    }
+  }
+
   useEffect(() => {
     if (token) {
       getUserAppointments();
@@ -80,7 +93,7 @@ const MyAppointments = () => {
               <div>
                 {
                   !item?.cancelled &&
-                    <button className="bg-blue-700 sm-text-xs text-sm text-white rounded-2xl px-1 py-2 cursor-pointer hover:scale-95 transition-all">
+                    <button onClick={() => appointmentRazorpay(item._id)} className="bg-blue-700 sm-text-xs text-sm text-white rounded-2xl px-1 py-2 cursor-pointer hover:scale-95 transition-all">
                       Pay Online
                     </button>
                 }
