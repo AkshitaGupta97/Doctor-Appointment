@@ -142,6 +142,9 @@ export const updateUserProfile = async (req, res) => {
     }
 };
 
+// get online payment method....
+
+
 // api to get user appointments for frontend my appointment page
 
 export const listAppointment = async (req, res) => {
@@ -192,7 +195,7 @@ export const cancelAppointment = async (req, res) => {
         await doctorModel.findByIdAndUpdate(doctorId, { slots_booked });
 
         res.json({ success: true, message: "Appointment cancelled successfully" });
-        
+
     } catch (error) {
         console.error("error from user controller -> ", error);
         return res.status(500).json({ success: false, message: "Internal server error" });
