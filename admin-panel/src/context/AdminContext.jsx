@@ -67,9 +67,26 @@ const AdminContextProvider = ({ children }) => {
         }
     };
 
+    // cancel appointment
+    const cancelAppointment = async(appointmentId) => {
+        try {
+            const {data} = await axios.post(backendUrl+'/api/admin/cancel-appointment', {appointmentId}, { headers: { Authorization: `Bearer ${adToken}` } } );
+            if(data.success){
+                toast.success(data.message);
+                getAllAppointments()
+            }
+            else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.log("error from admin ", error);
+            toast.error(error.message);
+        }
+    }
+
     const value = {
         adToken, setAdToken, backendUrl, doctors, setDoctors, getAllDoctorList, changeAvailability,
-        appointments, setAppointments, getAllAppointments
+        appointments, setAppointments, getAllAppointments, cancelAppointment
     }
 
     return (

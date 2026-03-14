@@ -1,56 +1,56 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
-import {v2 as cloudinary} from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js';
 import jwt from 'jsonwebtoken';
 import appointmentModel from '../models/AppointmentModel.js';
 
 // api for adding doctor
-export const addDoctor = async(req, res) => {
-    try {
-        const {name, email, password, speciality, degree, experience, about, fees, address} = req.body;
-        const imageFile = req.file;
-        // checking for all data to add doctor
-        if(!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address || !imageFile){
-            return res.status(400).json({success: false, message: "All details are required.."});
-        }
-        //console.log("BODY:", req.body);
-        //console.log("FILE:", req.file);
-        // validating email
-        if(!validator.isEmail(email)){
-            return res.status(400).json({success: false, message: "Enter valid email.."});
-        }
-        // validating password
-        if(password.length < 8){
-            return res.json({success: false, message: "Enter a strong password.."});
-        }
-        // ecrypt password by bcrypt using hashing
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-       // console.log("req.file =", req.file);
-        // upload image to cloudinary
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, {resource_type:"image"});
-        const imageUrl =imageUpload.secure_url;
-        //save data to database, JSON.parse(address), convert address to json format
-        let parsedAddress;
-        try {
-            parsedAddress = JSON.parse(address);
-        } catch (parseError) {
-            return res.json({success: false, message: "Invalid address format. Must be valid JSON."});
-        }
-        const doctorData = {
-            name, email, degree, speciality, experience, about, fees,  
-            image:imageUrl, password:hashedPassword, address:parsedAddress, date: Date.now()
-        }
-        const newDoctor = new doctorModel(doctorData);
-        await newDoctor.save();
-
-        res.json({success: true, message:"Doctor added."})
-
-    } catch (error) {
-        console.log("error from admin -> addDoctor = ", error);
-        return res.json({success: false, message: "Internal server error"});
+export const addDoctor = async (req, res) => {
+  try {
+    const { name, email, password, speciality, degree, experience, about, fees, address } = req.body;
+    const imageFile = req.file;
+    // checking for all data to add doctor
+    if (!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address || !imageFile) {
+      return res.status(400).json({ success: false, message: "All details are required.." });
     }
+    //console.log("BODY:", req.body);
+    //console.log("FILE:", req.file);
+    // validating email
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ success: false, message: "Enter valid email.." });
+    }
+    // validating password
+    if (password.length < 8) {
+      return res.json({ success: false, message: "Enter a strong password.." });
+    }
+    // ecrypt password by bcrypt using hashing
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    // console.log("req.file =", req.file);
+    // upload image to cloudinary
+    const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
+    const imageUrl = imageUpload.secure_url;
+    //save data to database, JSON.parse(address), convert address to json format
+    let parsedAddress;
+    try {
+      parsedAddress = JSON.parse(address);
+    } catch (parseError) {
+      return res.json({ success: false, message: "Invalid address format. Must be valid JSON." });
+    }
+    const doctorData = {
+      name, email, degree, speciality, experience, about, fees,
+      image: imageUrl, password: hashedPassword, address: parsedAddress, date: Date.now()
+    }
+    const newDoctor = new doctorModel(doctorData);
+    await newDoctor.save();
+
+    res.json({ success: true, message: "Doctor added." })
+
+  } catch (error) {
+    console.log("error from admin -> addDoctor = ", error);
+    return res.json({ success: false, message: "Internal server error" });
+  }
 }
 
 // api for admin login
@@ -92,24 +92,58 @@ export const allDoctors = async (req, res) => {
   try {
     const doctors = await doctorModel.find({}).select('-password');
 
-    res.json({success: true, doctors });
+    res.json({ success: true, doctors });
 
   } catch (error) {
-      console.log("error from all doctors admin -> ", error);
-      res.json({success:false, message:error.message})
+    console.log("error from all doctors admin -> ", error);
+    res.json({ success: false, message: error.message })
   }
 }
 
 // api to get all appointment list
-export const appointmentAdmin = async(req, res) => {
+export const appointmentAdmin = async (req, res) => {
   try {
     const appointments = await appointmentModel.find({});
-    res.json({success: true, appointments});
+    res.json({ success: true, appointments });
 
   } catch (error) {
     console.log("error from all doctors admin -> ", error);
-      res.json({success:false, message:error.message})
+    res.json({ success: false, message: error.message })
   }
 }
+
+// api for appointment cancellation
+export const appointmentCancel = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+
+    // find appointment by its _id
+    const appointmentData = await appointmentModel.findById(appointmentId);
+    if (!appointmentData) {
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+
+    // mark appointment as cancelled
+    await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true });
+
+    // release doctor slot
+    const { doctorId, slotDate, slotTime } = appointmentData;
+
+    const doctorData = await doctorModel.findById(doctorId);
+    let slots_booked = doctorData.slots_booked || {};
+
+    if (slots_booked[slotDate]) {
+      slots_booked[slotDate] = slots_booked[slotDate].filter(time => time !== slotTime);
+    }
+
+    await doctorModel.findByIdAndUpdate(doctorId, { slots_booked });
+
+    res.json({ success: true, message: "Appointment cancelled successfully" });
+
+  } catch (error) {
+    console.error("error from user controller -> ", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 

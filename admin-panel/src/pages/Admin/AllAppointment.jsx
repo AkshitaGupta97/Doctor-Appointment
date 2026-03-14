@@ -1,9 +1,11 @@
 import { useContext } from "react"
 import { AdminContext } from "../../context/AdminContext"
 import { useEffect } from "react";
+import { AppContext } from "../../context/AppContext";
 
 const AllAppointment = () => {
-  const {adToken, appointments, getAllAppointments} = useContext(AdminContext);
+  const {adToken, appointments, getAllAppointments, cancelAppointment} = useContext(AdminContext);
+  const {calculateAge, slotDateFormat} = useContext(AppContext);
 
   useEffect(() => {
     if(adToken){
@@ -30,12 +32,26 @@ const AllAppointment = () => {
 
         {
           appointments.map((item, index) => (
-            <div key={index}>
-              <p>{index+1}</p>
-              <div>
-                <img src={item.userData.image} alt={item.userData.name} />
-                <p>{item.userData.name}</p>
+            <div className="flex flex-wrap justify-between max-sm:gap-2 sm:grid sm:grid-cols-[0.5fr_3fr_1fr_3fr_3fr_1fr_1fr] items-center text-gray-800 py-3 px-6 border-b bg-gray-300 hover:bg-gray-400" key={index}>
+              <p className="max-sm:hidden">{index+1}</p>
+              <div className="flex items-center gap-2">
+                <img className="w-12 rounded-full" src={item.userData?.image} alt={item.userData?.name} />
+                <p>{item.userData?.name}</p>
               </div>
+              <p className="max-sm:hidden">{calculateAge(item.userData?.dob)}</p>
+              <p>{slotDateFormat(item.slotDate)}, {item.slotTime}</p>
+
+              <div className="flex items-center gap-2">
+                <img className="w-12 rounded-full bg-gray-400" src={item.doctorData?.image} alt={item.doctorData.name} />
+                <p>{item.doctorData?.name}</p>
+              </div>
+              <p>{item?.amount}</p>
+              {
+                item?.cancelled ? <p className="text-red-800 ">Cancelled</p> 
+                :<p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-100 rounded-full text-red-400">close</span></p>
+
+              }
+              
             </div>
           ))
         }
