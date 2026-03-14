@@ -2,11 +2,13 @@ import { useContext, useEffect, useState } from "react"
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MyAppointments = () => {
 
   const { backendUrl, token, getAllDoctors } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
+  const navigate = useNavigate();
 
   const months = ['', 'Jan', 'Feb', "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -69,26 +71,31 @@ const MyAppointments = () => {
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: order.amount,
-      currency: "INR",
+      currency: order.currency,
       name: "Doctor Appointment",
       description: "Appointment Payment",
       order_id: order.id,
 
-      handler: function (response) {
+      handler: async (response) => {
         console.log("Payment Success:", response);
-      },
-
-      prefill: {
-        name: "Test User",
-        email: "test@gmail.com",
-        contact: "9999999999"
+        try {
+          const {data} = await axios.post(backendUrl+'/api/user/verifyRazorpay', response, { headers: { Authorization: `Bearer ${token}` }});
+          if(data.success){
+            getUserAppointments();
+            navigate('/my-appointment');
+            toast.success(data.message);
+          }
+        } catch (error) {
+          console.log("Error from my-appointment", error);
+          toast.error(error.message);
+        }
       },
 
       theme: {
         color: "#3399cc"
       }
     };
-
+    console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
@@ -114,6 +121,7 @@ const MyAppointments = () => {
       toast.error(error.message);
     }
   };
+
 
   useEffect(() => {
     if (token) {
@@ -176,8 +184,11 @@ const MyAppointments = () => {
             </div>
 
             <div>
-
-              {!item?.cancelled && (
+              {
+                !item.cancelled && item.payment &&
+                <button className="bg-green-700 sm:text-xs text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all" >Paid</button>
+              }
+              {!item?.cancelled && !item.payment  (
                 <button
                   onClick={() => appointmentRazorpay(item._id)}
                   className="bg-blue-700 sm:text-xs text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all"

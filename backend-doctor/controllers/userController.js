@@ -221,21 +221,21 @@ export const paymentRazorpay = async (req, res) => {
                 message: "Appointment cancelled or not found"
             });
         }
+
         console.log("Appointment:", appointmentData);
+
         const options = {
             amount: appointmentData.amount * 100,
             currency: "INR",
-            receipt: appointmentId,
-            notes: {
-                appointmentId: appointmentId
-            }
-        };
+            receipt: appointmentId
+        }
+
         const order = await razorpayInstance.orders.create(options);
 
         res.json({
             success: true,
             order
-        });
+        })
 
     } catch (error) {
         console.log(error);
@@ -245,6 +245,31 @@ export const paymentRazorpay = async (req, res) => {
         });
     }
 };
+
+//  verify razor pay
+export const verifyRazorPay = async(req, res) => {
+    try {
+        const {razorpay_order_id} = req.body;
+        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
+        console.log(orderInfo);
+
+        if(orderInfo.status === 'paid'){
+            await appointmentModel.findByIdAndUpdate(orderInfo.receipt, {payment: true});
+            res.json({success:true, message: 'Payment successful..'});
+        }
+        else{
+            res.json({success:false, message: 'Payment Failed..'});
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+}
 
 // book appointment with the doctor
 export const bookAppointment = async (req, res) => {
