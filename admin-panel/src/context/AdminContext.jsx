@@ -88,7 +88,7 @@ const AdminContextProvider = ({ children }) => {
     // get dashboard data
     const getDashData = async() => {
         try {
-            const {data} = axios.get(backendUrl+'/api/admin/dashboard', { headers: { Authorization: `Bearer ${adToken}` } } );
+            const {data} = await axios.get(backendUrl+'/api/admin/dashboard', { headers: { Authorization: `Bearer ${adToken}` } } );
             if(data.success){
                 setDashData(data.dashData);
                 console.log("Admin context -> ", data.dashData);
