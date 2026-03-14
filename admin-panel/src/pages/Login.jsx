@@ -64,7 +64,7 @@ const Login = () => {
                     />
                 </div>
 
-                <button className="bg-cyan-700 cursor-pointer hover:scale-95 transition-all text-white w-full py-2 rounded">
+                <button className={`${state==='Doctor' ? 'bg-cyan-700' : "bg-blue-800"} cursor-pointer hover:scale-95 transition-all text-white w-full py-2 rounded`}>
                     Login
                 </button>
 
