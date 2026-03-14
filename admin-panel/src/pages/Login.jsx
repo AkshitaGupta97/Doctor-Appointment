@@ -40,10 +40,10 @@ const Login = () => {
     return (
         <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center">
 
-            <div className="flex flex-col gap-4 m-auto px-6 py-6 sm:min-w-96 border rounded-xl text-cyan-800 shadow-lg shadow-gray-900 bg-white">
+            <div className={` ${state === 'Doctor' ? "bg-blue-400": "bg-amber-100"} flex flex-col gap-4 m-auto px-6 py-6 sm:min-w-96 border rounded-xl text-cyan-800 shadow-lg shadow-gray-900 bg-white`}>
 
                 <p className="text-xl text-center text-amber-800 font-semibold">
-                    <span>{state}</span> Login🚀
+                    <span className={` ${state==='Doctor' ? 'text-blue-700' : "text-cyan-700"}`}>{state}</span> Login🚀
                 </p>
 
                 <div className="w-full">
