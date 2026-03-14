@@ -9,6 +9,7 @@ const AdminContextProvider = ({ children }) => {
     const [adToken, setAdToken] = useState(localStorage.getItem('adToken') ? localStorage.getItem('adToken') : '');
     const [doctors, setDoctors] = useState([]);
     const [appointments, setAppointments] = useState([]);
+    const [dashData, setDashData] = useState(false);
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -56,7 +57,7 @@ const AdminContextProvider = ({ children }) => {
 
             if (data.success) {
                 setAppointments(data.appointments);
-                console.log("Appointm - admin -", data.appointments);
+               // console.log("Appointm - admin -", data.appointments);
                 
             } else {
                 toast.error(data.message);
@@ -84,9 +85,27 @@ const AdminContextProvider = ({ children }) => {
         }
     }
 
+    // get dashboard data
+    const getDashData = async() => {
+        try {
+            const {data} = axios.get(backendUrl+'/api/admin/dashboard', { headers: { Authorization: `Bearer ${adToken}` } } );
+            if(data.success){
+                setDashData(data.dashData);
+                console.log("Admin context -> ", data.dashData);
+            }
+            else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.log("error from admin ", error);
+            toast.error(error.message);
+        }
+    }
+
     const value = {
         adToken, setAdToken, backendUrl, doctors, setDoctors, getAllDoctorList, changeAvailability,
-        appointments, setAppointments, getAllAppointments, cancelAppointment
+        appointments, setAppointments, getAllAppointments, cancelAppointment,
+        dashData, getDashData,
     }
 
     return (

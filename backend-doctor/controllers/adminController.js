@@ -4,6 +4,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js';
 import jwt from 'jsonwebtoken';
 import appointmentModel from '../models/AppointmentModel.js';
+import userModel from '../models/userModel.js';
 
 // api for adding doctor
 export const addDoctor = async (req, res) => {
@@ -145,5 +146,25 @@ export const appointmentCancel = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// api to get dashboard data
+export const adminDashboard = async(req, res) => {
+  try {
+    const doctors = await doctorModel.find({});
+    const users = await userModel.find({});
+    const appointments = await appointmentModel.find({});
+
+    const dashData = {
+      doctors: doctors.length,
+      appointments: appointments.length,
+      patients: users.length,
+      latestAppointment: appointments.reverse().slice(0,5)  // reverse, to get get latest appointments,
+    }
+    res.json({success: true, dashData});
+  } catch (error) {
+    console.error("error from user controller -> ", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
 
 
