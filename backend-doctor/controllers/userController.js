@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js';
 import appointmentModel from '../models/AppointmentModel.js';
-import razorpay from 'razorpay';
+import Razorpay from "razorpay";
 
 // api to register user
 export const registerUser = async (req, res) => {
@@ -203,37 +203,48 @@ export const cancelAppointment = async (req, res) => {
 };
 
 // RAZOR PAY payment method
-const razorpayInstance = new razorpay({
+
+const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-export const paymentRazorpay = async(req, res) => {
+export const paymentRazorpay = async (req, res) => {
     try {
         const { appointmentId } = req.body;
+
         const appointmentData = await appointmentModel.findById(appointmentId);
 
         if (!appointmentData || appointmentData.cancelled) {
-            return res.json({ success: false, message: "Appointment canelled or not found" })
+            return res.json({
+                success: false,
+                message: "Appointment cancelled or not found"
+            });
         }
-
-        // creating option for razorpay payment
+        console.log("Appointment:", appointmentData);
         const options = {
-            amount: appointmentData.amount * 100,  // *100 it will remove two decimal places
-            currency: process.env.CURRENCY,
-            receipt: appointmentId
-        }
-
-        // creation of an order
+            amount: appointmentData.amount * 100,
+            currency: "INR",
+            receipt: appointmentId,
+            notes: {
+                appointmentId: appointmentId
+            }
+        };
         const order = await razorpayInstance.orders.create(options);
 
-        res.json({ success: true, order });
-        
+        res.json({
+            success: true,
+            order
+        });
+
     } catch (error) {
-        console.error("error from user controller -> ", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
     }
-}
+};
 
 // book appointment with the doctor
 export const bookAppointment = async (req, res) => {
