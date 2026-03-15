@@ -1,6 +1,7 @@
 import doctorModel from "../models/doctorModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import appointmentModel from "../models/AppointmentModel.js";
 
 // to change availability of doctor
 export const changeAvailability = async (req, res) => {
@@ -46,6 +47,20 @@ export const loginDoctor = async(req, res) => {
         else {
             return res.json({success:false, message: "Invalid credentials.."});
         }
+
+    } catch (error) {
+        console.log("error from doctor -> loginDoctor = ", error);
+        res.json({success: false, message: error.message})
+    }
+}
+
+// get doctor appointment for doctor panel
+export const appointmentDoctor = async(req, res) => {
+    try {
+        const doctorId = req.docId;
+        const appointments = await appointmentModel.find({doctorId});
+        
+        res.json({success: true, appointments});
 
     } catch (error) {
         console.log("error from doctor -> loginDoctor = ", error);
