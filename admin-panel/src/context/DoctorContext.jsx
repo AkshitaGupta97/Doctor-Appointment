@@ -28,8 +28,8 @@ const DoctorContextProvider = ({ children }) => {
     // get appointments of doctor
     const getAppointments = async () => {
         try {
-            const {data} = await axios.get(backendUrl+'/api/doctors/appointment', { headers: { Authorization: `Bearer ${dToken}` } });
-            if(data.success){
+            const { data } = await axios.get(backendUrl + '/api/doctors/appointment', { headers: { Authorization: `Bearer ${dToken}` } });
+            if (data.success) {
                 setAppointments(data.appointments.reverse());
                 console.log("in doctor context", data.appointments);
             }
@@ -43,11 +43,56 @@ const DoctorContextProvider = ({ children }) => {
     }
 
     // mark appointment complete
-    
+    const completeAppointment = async (appointmentId) => {
+        try {
+
+            const { data } = await axios.post(
+                backendUrl + '/api/doctors/complete-appointment',
+                { appointmentId },
+                { headers: { Authorization: `Bearer ${dToken}` } }
+            );
+
+            if (data.success) {
+                toast.success(data.message);
+                getAppointments();
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            console.log("error from doctor", error);
+            toast.error(error.message);
+        }
+    };
+
+    // mark appointment cancel
+    const cancelAppointment = async (appointmentId) => {
+        try {
+
+            const { data } = await axios.post(
+                backendUrl + "/api/doctors/cancel-appointment", { appointmentId },
+                {
+                    headers: { Authorization: `Bearer ${dToken}` }
+                }
+            );
+
+            if (data.success) {
+                toast.success(data.message);
+                getAppointments();
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            console.log("error from doctor", error);
+            toast.error(error.message);
+        }
+    };
+
 
     const value = {
-        dToken, setDtoken, backendUrl, appointments, getAppointments, calculateAge,  slotDateFormat,
-
+        dToken, setDtoken, backendUrl, appointments, getAppointments, calculateAge, slotDateFormat,
+        cancelAppointment, completeAppointment,
     }
 
     return (

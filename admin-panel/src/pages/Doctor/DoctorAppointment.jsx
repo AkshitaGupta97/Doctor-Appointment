@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react"
 import { DoctorContext } from "../../context/DoctorContext"
 
 const DoctorAppointment = () => {
-  const { dToken, appointments, getAppointments, calculateAge, slotDateFormat } = useContext(DoctorContext);
+  const { dToken, appointments, getAppointments, calculateAge, slotDateFormat, cancelAppointment, completeAppointment } = useContext(DoctorContext);
 
   useEffect(() => {
     if(dToken){
@@ -42,8 +42,8 @@ const DoctorAppointment = () => {
               <p>{slotDateFormat(item.slotDate)}, {item.slotTime}</p>
               <p>{item?.amount}</p>
               <div className="flex gap-1.5">
-                <p><span className="material-symbols-outlined cursor-pointer font-bold bg-red-200 rounded-full text-red-600">close</span></p>
-                <p><span className="material-symbols-outlined cursor-pointer font-bold bg-green-300 rounded-full text-green-600">check_small</span></p>
+                <p><span onClick={() => completeAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-200 rounded-full text-red-600">close</span></p>
+                <p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-green-300 rounded-full text-green-600">check_small</span></p>
               </div>
             </div>
           ))
