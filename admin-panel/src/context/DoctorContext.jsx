@@ -11,6 +11,7 @@ const DoctorContextProvider = ({ children }) => {
     const [dToken, setDtoken] = useState(localStorage.getItem('dToken') ? localStorage.getItem('dToken') : '');
     const [appointments, setAppointments] = useState([]);
     const [dashData, setDashData] = useState(false);
+    const [profileData, setProfileData] = useState(false);
 
     const calculateAge = (dob) => {
         const today = new Date();
@@ -94,10 +95,24 @@ const DoctorContextProvider = ({ children }) => {
             const {data} = await axios.get(backendUrl+'/api/doctors/dashboard', {headers: { Authorization: `Bearer ${dToken}` }} );
             if(data.success){
                 setDashData(data.dashData);
-                console.log("dash data => ", data.dashData);
+               // console.log("dash data => ", data.dashData);
             }
             else {
                 toast.error(data.message);
+            }
+        } catch (error) {
+            console.log("error from doctor", error);
+            toast.error(error.message);
+        }
+    }
+
+    // get profile data
+    const getProfileData = async() => {
+        try {
+            const {data} = await axios.get(backendUrl+'/api/doctors/profile', {headers: {Authorization: `Bearer ${dToken}`}});
+            if(data.success){
+                setProfileData(data.profileData);
+              //  console.log("profile data => ", data.profileData);
             }
         } catch (error) {
             console.log("error from doctor", error);
@@ -109,6 +124,7 @@ const DoctorContextProvider = ({ children }) => {
     const value = {
         dToken, setDtoken, backendUrl, appointments, getAppointments, calculateAge, slotDateFormat,
         cancelAppointment, completeAppointment, getDashData, dashData, setDashData,
+        profileData, setProfileData, getProfileData,
     }
 
     return (
