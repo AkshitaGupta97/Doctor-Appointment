@@ -4,7 +4,7 @@ import { AppContext } from "../../context/AppContext";
 
 const Dashboard = () => {
   const { dashData, getDashData, adToken, cancelAppointment } = useContext(AdminContext);
-  const {slotDateFormat} = useContext(AppContext);
+  const { slotDateFormat } = useContext(AppContext);
 
   useEffect(() => {
     if (adToken) {
@@ -45,22 +45,43 @@ const Dashboard = () => {
 
       <div className="bg-white">
 
-        <div className="flex items-center gap-2.5 py-4 mt-10 rounded-2xl shadow-lg shadow-cyan-950">
-          <p className="font-bold text-lg pl-2 text-amber-700">Latest Bookings..</p>
+        <div className="flex items-center gap-2.5 py-4 mt-10 rounded-2xl shadow-lg shadow-cyan-950 px-4">
+          <p className="font-bold text-lg text-amber-700">Latest Bookings..</p>
         </div>
 
         <div className="pt-4">
           {
             dashData.latestAppointment.map((item, index) => (
-              <div className="flex flex-wrap justify-between max-sm:gap-4 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr_3fr_1fr_1fr] gap-1 items-center text-gray-800 bg-gray-300 hover:bg-gray-400 border-b px-4" key={index}>
-                <img className="rounded-full w-12" src={item.doctorData.image} alt={item.doctorData.name} />
-                <div className="flex-1 text-sm ">
+              <div
+                key={index}
+                className="flex items-center justify-between gap-4 px-4 py-3 border-b text-gray-800 bg-gray-300 hover:bg-gray-400 transition-all"
+              >
+                <img
+                  className="rounded-full w-12 h-12 object-cover"
+                  src={item.doctorData.image}
+                  alt={item.doctorData.name}
+                />
+
+                <div className="flex-1 text-sm">
                   <p className="text-amber-800">{item.doctorData.name}</p>
                   <p className="text-gray-800">{slotDateFormat(item.slotDate)}</p>
                 </div>
+
                 {
-                  item?.cancelled ? <p className="text-red-800 ">Cancelled</p>
-                    : <p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-100 rounded-full text-red-400">close</span></p>
+                  item?.cancelled
+                    ? (
+                      <p className="text-red-800 font-semibold">
+                        Cancelled
+                      </p>
+                    )
+                    : (
+                      <span
+                        onClick={() => cancelAppointment(item._id)}
+                        className="material-symbols-outlined cursor-pointer font-bold bg-red-100 rounded-full text-red-400 p-1 hover:bg-red-200"
+                      >
+                        close
+                      </span>
+                    )
                 }
               </div>
             ))
