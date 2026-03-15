@@ -52,7 +52,7 @@ const Dashboard = () => {
         <div className="pt-4">
           {
             dashData.latestAppointment.map((item, index) => (
-              <div className="flex items-center px-6 py-3 gap-3 border-b rounded-2xl bg-gray-300 hover:bg-gray-400" key={index}>
+              <div className="flex flex-wrap justify-between max-sm:gap-4 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr_3fr_1fr_1fr] gap-1 items-center text-gray-800 bg-gray-300 hover:bg-gray-400 border-b px-4" key={index}>
                 <img className="rounded-full w-12" src={item.doctorData.image} alt={item.doctorData.name} />
                 <div className="flex-1 text-sm ">
                   <p className="text-amber-800">{item.doctorData.name}</p>

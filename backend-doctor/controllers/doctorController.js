@@ -33,24 +33,26 @@ export const getDoctorList = async(req, res) => {
 export const loginDoctor = async(req, res) => {
     try {
         const {email, password} = req.body;
+
         const doctor = await doctorModel.findOne({email});
 
         if(!doctor){
             return res.json({success:false, message: "Invalid credentials.."});
         }
-        // check for password
-        const isMatch = await  bcrypt.compare(password, doctor.password);
+
+        const isMatch = await bcrypt.compare(password, doctor.password);
+
         if(isMatch){
-            const token = jwt.sign({id: doctor._d}, process.env.JWT_SECRET);
+            const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET);
             res.json({success: true, token});
         }
-        else {
+        else{
             return res.json({success:false, message: "Invalid credentials.."});
         }
 
     } catch (error) {
         console.log("error from doctor -> loginDoctor = ", error);
-        res.json({success: false, message: error.message})
+        res.json({success: false, message: error.message});
     }
 }
 

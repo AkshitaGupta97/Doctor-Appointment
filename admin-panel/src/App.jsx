@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Login from "./pages/Login";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { AdminContext } from "./context/AdminContext";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -16,42 +16,45 @@ import DoctorAppointment from "./pages/Doctor/DoctorAppointment";
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
 
 function App() {
-
   const { adToken } = useContext(AdminContext);
-  const {dToken} = useContext(DoctorContext);
+  const { dToken } = useContext(DoctorContext);
 
   return (
     <div>
-      {
-        adToken || dToken ?
-          (
-            <>
-              <Navbar />
+      {adToken || dToken ? (
+        <>
+          <Navbar />
+          <Sidebar />
 
-              <Sidebar />
+          {/* Main Content */}
+          <div className="mt-16 ml-16 md:ml-64 p-6 h-[calc(100vh-4rem)] overflow-y-auto transition-all">
+            <Routes>
 
-              <div className="ml-68 mt-18 h-[calc(100vh-6rem)] overflow-y-auto">
-                <Routes>
-                  {/* Admin route */}
-                  <Route path='/admin-dashboard' element={<Dashboard />} />
-                  <Route path='/all-appointments' element={<AllAppointment />} />
-                  <Route path='/add-doctor' element={<AddDoctor />} />
-                  <Route path='/doctor-list' element={<DoctorList />} />
+              {/* Admin routes */}
+              <Route path="/admin-dashboard" element={<Dashboard />} />
+              <Route path="/all-appointments" element={<AllAppointment />} />
+              <Route path="/add-doctor" element={<AddDoctor />} />
+              <Route path="/doctor-list" element={<DoctorList />} />
 
-                  {/* Doctor routes */}
-                  <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
-                  <Route path='/doctor-appointment' element={<DoctorAppointment />} />
-                  <Route path='/doctor-profile' element={<DoctorProfile />} />
+              {/* Doctor routes */}
+              <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+              <Route path="/doctor-appointment" element={<DoctorAppointment />} />
+              <Route path="/doctor-profile" element={<DoctorProfile />} />
 
-                  <Route path='*' element={<h1 className="text-2xl text-center mt-20">404 Not Found</h1>} />
-                </Routes>
-              </div>
-
-            </>
-          )
-
-          : <Login />
-      }
+              <Route
+                path="*"
+                element={
+                  <h1 className="text-2xl text-blue-900 text-center mt-20">
+                    404 Not Found
+                  </h1>
+                }
+              />
+            </Routes>
+          </div>
+        </>
+      ) : (
+        <Login />
+      )}
 
       <ToastContainer
         position="top-right"
@@ -63,7 +66,6 @@ function App() {
         draggable
         theme="colored"
       />
-
     </div>
   );
 }
