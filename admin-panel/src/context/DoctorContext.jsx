@@ -18,7 +18,7 @@ const DoctorContextProvider = ({ children }) => {
         let age = today.getFullYear() - birthDate.getFullYear()
         return age;
     }
-    
+
     const months = ['', 'Jan', 'Feb', "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const slotDateFormat = (slotDate) => {
         const dateArray = slotDate.split('_');
@@ -41,6 +41,9 @@ const DoctorContextProvider = ({ children }) => {
             toast.error(error.message);
         }
     }
+
+    // mark appointment complete
+    
 
     const value = {
         dToken, setDtoken, backendUrl, appointments, getAppointments, calculateAge,  slotDateFormat,

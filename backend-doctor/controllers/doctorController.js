@@ -65,7 +65,57 @@ export const appointmentDoctor = async(req, res) => {
         res.json({success: true, appointments});
 
     } catch (error) {
-        console.log("error from doctor -> loginDoctor = ", error);
+        console.log("error from doctor -> appointmentDoctor = ", error);
         res.json({success: false, message: error.message})
     }
 }
+
+// api to mark appointment completed
+
+export const appointmentComplete = async(req, res) => {
+    try {
+        const doctorId = req.docId;
+        const {appointmentId} = req.body;
+        
+        const appointmentData = await appointmentModel.findById(appointmentId);
+        if(appointmentData && appointmentData.doctorId === doctorId){
+            await appointmentModel.findByIdAndDelete(appointmentId, {isCompleted: true});
+            
+            return res.json({success:true, message:"Appointment completed"});
+        }
+        else {
+            return res.json({success:false, message:"Mark failed"});
+        }
+
+
+    } catch (error) {
+        console.log("error from doctor -> appointmentComplete = ", error);
+        res.json({success: false, message: error.message})
+    }
+}
+
+// api to cancel appointment cancelled
+
+export const appointmentCancelled = async(req, res) => {
+    try {
+        const doctorId = req.docId;
+        const {appointmentId} = req.body;
+        
+        const appointmentData = await appointmentModel.findById(appointmentId);
+        if(appointmentData && appointmentData.doctorId === doctorId){
+            await appointmentModel.findByIdAndDelete(appointmentId, {cancelled: true});
+            
+            return res.json({success:true, message:"Appointment cancelled"});
+        }
+        else {
+            return res.json({success:false, message:" cancellation failed"});
+        }
+
+
+    } catch (error) {
+        console.log("error from doctor -> appointmentCancelled = ", error);
+        res.json({success: false, message: error.message})
+    }
+}
+
+
