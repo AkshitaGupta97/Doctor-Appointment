@@ -10,15 +10,20 @@ import Dashboard from "./pages/Admin/Dashboard";
 import AllAppointment from "./pages/Admin/AllAppointment";
 import AddDoctor from "./pages/Admin/AddDoctor";
 import DoctorList from "./pages/Admin/DoctorList";
+import { DoctorContext } from "./context/DoctorContext";
+import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
+import DoctorAppointment from "./pages/Doctor/DoctorAppointment";
+import DoctorProfile from "./pages/Doctor/DoctorProfile";
 
 function App() {
 
   const { adToken } = useContext(AdminContext);
+  const {dToken} = useContext(DoctorContext);
 
   return (
     <div>
       {
-        adToken ?
+        adToken || dToken ?
           (
             <>
               <Navbar />
@@ -27,10 +32,17 @@ function App() {
 
               <div className="ml-68 mt-18 h-[calc(100vh-6rem)] overflow-y-auto">
                 <Routes>
+                  {/* Admin route */}
                   <Route path='/admin-dashboard' element={<Dashboard />} />
                   <Route path='/all-appointments' element={<AllAppointment />} />
                   <Route path='/add-doctor' element={<AddDoctor />} />
                   <Route path='/doctor-list' element={<DoctorList />} />
+
+                  {/* Doctor routes */}
+                  <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
+                  <Route path='/doctor-appointment' element={<DoctorAppointment />} />
+                  <Route path='/doctor-profile' element={<DoctorProfile />} />
+
                   <Route path='*' element={<h1 className="text-2xl text-center mt-20">404 Not Found</h1>} />
                 </Routes>
               </div>
