@@ -163,3 +163,34 @@ export const doctorDashboard = async(req, res) => {
     }
 }
 
+// api to get Docoter profile for doctor
+export const doctorProfile = async(req, res) => {
+    try {
+        const doctorId = req.docId;
+        const profileData = await doctorModel.findById(doctorId).select('-password');
+
+        res.json({success: true, profileData});
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// api to update doctor profile
+
+export const updateDoctorProfile = async(req, res) => {
+    try {
+        const doctorId = req.docId;
+        const {fees, address, available} = req.body;
+
+        await doctorModel.findByIdAndUpdate(doctorId, {fees, address, available});
+
+        res.json({success: true, message:"Profile Updated."})
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
