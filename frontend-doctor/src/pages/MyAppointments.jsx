@@ -27,7 +27,7 @@ const MyAppointments = () => {
 
       if (data.success) {
         setAppointments(data.appointments.reverse());
-        console.log(data.appointments);
+       //  console.log(data.appointments);
       }
 
     } catch (error) {
@@ -41,7 +41,7 @@ const MyAppointments = () => {
 
     try {
 
-      console.log("cancel appointment id -> ", appointmentId);
+     // console.log("cancel appointment id -> ", appointmentId);
 
       const { data } = await axios.post(
         backendUrl + "/api/user/cancel-appointment",
@@ -66,7 +66,7 @@ const MyAppointments = () => {
   // Initialize Razorpay
   const initPay = (order) => {
 
-    console.log("Full Razorpay Order:", order);
+   // console.log("Full Razorpay Order:", order);
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -77,7 +77,7 @@ const MyAppointments = () => {
       order_id: order.id,
 
       handler: async (response) => {
-        console.log("Payment Success:", response);
+       // console.log("Payment Success:", response);
         try {
           const {data} = await axios.post(backendUrl+'/api/user/verifyRazorpay', response, { headers: { Authorization: `Bearer ${token}` }});
           if(data.success){
@@ -95,7 +95,7 @@ const MyAppointments = () => {
         color: "#3399cc"
       }
     };
-    console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
+   // console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
@@ -112,7 +112,7 @@ const MyAppointments = () => {
       );
 
       if (data.success) {
-        console.log("Razorpay Order:", data.order);
+       // console.log("Razorpay Order:", data.order);
         initPay(data.order);
       }
 
@@ -185,10 +185,10 @@ const MyAppointments = () => {
 
             <div>
               {
-                !item.cancelled && item.payment &&
+                !item.cancelled && item?.payment &&
                 <button className="bg-green-700 sm:text-xs text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all" >Paid</button>
               }
-              {!item?.cancelled && !item.payment  (
+              {!item?.cancelled && !item?.payment &&  (
                 <button
                   onClick={() => appointmentRazorpay(item._id)}
                   className="bg-blue-700 sm:text-xs text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all"

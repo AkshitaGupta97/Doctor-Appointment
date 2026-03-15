@@ -30,7 +30,7 @@ const DoctorContextProvider = ({ children }) => {
         try {
             const { data } = await axios.get(backendUrl + '/api/doctors/appointment', { headers: { Authorization: `Bearer ${dToken}` } });
             if (data.success) {
-                setAppointments(data.appointments.reverse());
+                setAppointments(data.appointments);
                 console.log("in doctor context", data.appointments);
             }
             else {

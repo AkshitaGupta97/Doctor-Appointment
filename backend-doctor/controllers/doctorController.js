@@ -6,116 +6,125 @@ import appointmentModel from "../models/AppointmentModel.js";
 // to change availability of doctor
 export const changeAvailability = async (req, res) => {
     try {
-        const {doctorId} = req.body;
+        const { doctorId } = req.body;
         const doctor = await doctorModel.findById(doctorId);
-        await doctorModel.findByIdAndUpdate(doctorId, {available: !doctor.available});
-        res.json({success: true, message: "Availability updated successfully"})
+        await doctorModel.findByIdAndUpdate(doctorId, { available: !doctor.available });
+        res.json({ success: true, message: "Availability updated successfully" })
     } catch (error) {
         console.log("error from doctor -> changeAvailability = ", error);
-        res.json({success: false, message: "Internal server error"})
+        res.json({ success: false, message: "Internal server error" })
     }
 }
 
 // get doctor list
-export const getDoctorList = async(req, res) => {
+export const getDoctorList = async (req, res) => {
     try {
-        const doctors = await doctorModel.find({available: true}).select(['-password', '-email']);
+        const doctors = await doctorModel.find({ available: true }).select(['-password', '-email']);
 
-        res.json({success: true, doctors});
+        res.json({ success: true, doctors });
 
     } catch (error) {
         console.log("error from doctor -> getDoctorList = ", error);
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
 // api for doctor login
-export const loginDoctor = async(req, res) => {
+export const loginDoctor = async (req, res) => {
     try {
-        const {email, password} = req.body;
+        const { email, password } = req.body;
 
-        const doctor = await doctorModel.findOne({email});
+        const doctor = await doctorModel.findOne({ email });
 
-        if(!doctor){
-            return res.json({success:false, message: "Invalid credentials.."});
+        if (!doctor) {
+            return res.json({ success: false, message: "Invalid credentials.." });
         }
 
         const isMatch = await bcrypt.compare(password, doctor.password);
 
-        if(isMatch){
+        if (isMatch) {
             const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET);
-            res.json({success: true, token});
+            res.json({ success: true, token });
         }
-        else{
-            return res.json({success:false, message: "Invalid credentials.."});
+        else {
+            return res.json({ success: false, message: "Invalid credentials.." });
         }
 
     } catch (error) {
         console.log("error from doctor -> loginDoctor = ", error);
-        res.json({success: false, message: error.message});
+        res.json({ success: false, message: error.message });
     }
 }
 
 // get doctor appointment for doctor panel
-export const appointmentDoctor = async(req, res) => {
+export const appointmentDoctor = async (req, res) => {
     try {
         const doctorId = req.docId;
-        const appointments = await appointmentModel.find({doctorId});
-        
-        res.json({success: true, appointments});
+        const appointments = await appointmentModel.find({ doctorId });
+
+        res.json({ success: true, appointments });
 
     } catch (error) {
         console.log("error from doctor -> appointmentDoctor = ", error);
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
 // api to mark appointment completed
 
-export const appointmentComplete = async(req, res) => {
+export const appointmentComplete = async (req, res) => {
     try {
-        const doctorId = req.docId;
-        const {appointmentId} = req.body;
-        
-        const appointmentData = await appointmentModel.findById(appointmentId);
-        if(appointmentData && appointmentData.doctorId === doctorId){
-            await appointmentModel.findByIdAndDelete(appointmentId, {isCompleted: true});
-            
-            return res.json({success:true, message:"Appointment completed"});
-        }
-        else {
-            return res.json({success:false, message:"Mark failed"});
-        }
 
+        const doctorId = req.docId;
+        const { appointmentId } = req.body;
+
+        const appointmentData = await appointmentModel.findById(appointmentId);
+
+        if (appointmentData && appointmentData.doctorId.toString() === doctorId) {
+
+            await appointmentModel.findByIdAndUpdate(
+                appointmentId,
+                { isCompleted: true }
+            );
+
+            return res.json({ success: true, message: "Appointment completed" });
+
+        } else {
+            return res.json({ success: false, message: "Update failed" });
+        }
 
     } catch (error) {
-        console.log("error from doctor -> appointmentComplete = ", error);
-        res.json({success: false, message: error.message})
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
-}
+};
 
 // api to cancel appointment cancelled
 
-export const appointmentCancelled = async(req, res) => {
+export const appointmentCancelled = async (req, res) => {
     try {
-        const doctorId = req.docId;
-        const {appointmentId} = req.body;
-        
-        const appointmentData = await appointmentModel.findById(appointmentId);
-        if(appointmentData && appointmentData.doctorId === doctorId){
-            await appointmentModel.findByIdAndDelete(appointmentId, {cancelled: true});
-            
-            return res.json({success:true, message:"Appointment cancelled"});
-        }
-        else {
-            return res.json({success:false, message:" cancellation failed"});
-        }
 
+        const doctorId = req.docId;
+        const { appointmentId } = req.body;
+
+        const appointmentData = await appointmentModel.findById(appointmentId);
+
+        if (appointmentData && appointmentData.doctorId.toString() === doctorId) {
+
+            await appointmentModel.findByIdAndUpdate(
+                appointmentId,
+                { cancelled: true }
+            );
+
+            return res.json({ success: true, message: "Appointment cancelled" });
+
+        } else {
+            return res.json({ success: false, message: "Cancellation failed" });
+        }
 
     } catch (error) {
-        console.log("error from doctor -> appointmentCancelled = ", error);
-        res.json({success: false, message: error.message})
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
-}
-
+};
 

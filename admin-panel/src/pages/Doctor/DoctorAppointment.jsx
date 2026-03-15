@@ -5,10 +5,10 @@ const DoctorAppointment = () => {
   const { dToken, appointments, getAppointments, calculateAge, slotDateFormat, cancelAppointment, completeAppointment } = useContext(DoctorContext);
 
   useEffect(() => {
-    if(dToken){
+    if (dToken) {
       getAppointments();
     }
-  },[dToken]);
+  }, [dToken]);
 
   return (
     <div className="w-full max-w-5xl m-5">
@@ -28,9 +28,9 @@ const DoctorAppointment = () => {
         </div>
 
         {
-          appointments.map((item, index) => (
-            <div className="flex flex-wrap justify-between max-sm:gap-4 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr_3fr_1fr_1fr] gap-1 items-center text-gray-800 bg-gray-300 hover:bg-gray-400 border-b px-4" key={index}>
-              <p className="max-sm:hidden">{index+1}</p>
+          appointments.reverse().map((item, index) => (
+            <div className="flex flex-wrap justify-between max-sm:gap-4 max-sm:text-base sm:grid grid-cols-[0.5fr_2fr_1fr_1fr_3fr_1fr_1fr] gap-1 items-center text-gray-800 bg-gray-200 hover:bg-gray-300 border-b px-4" key={index}>
+              <p className="max-sm:hidden">{index + 1}</p>
               <div className="flex items-center gap-2">
                 <img className="w-10 rounded-full" src={item.userData?.image} alt={item.userData?.name} />
                 <p>{item.userData?.name}</p>
@@ -41,10 +41,15 @@ const DoctorAppointment = () => {
               <p className="max-sm:hidden">{calculateAge(item.userData.dob)}</p>
               <p>{slotDateFormat(item.slotDate)}, {item.slotTime}</p>
               <p>{item?.amount}</p>
-              <div className="flex gap-1.5">
-                <p><span onClick={() => completeAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-200 rounded-full text-red-600">close</span></p>
-                <p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-green-300 rounded-full text-green-600">check_small</span></p>
-              </div>
+              {
+                item.cancelled ? <p className="text-red-700 underline">Cancelled</p> : item.isCompleted ?
+                   <p className="text-green-700 underline">Completed</p>
+                  : <div className="flex gap-1.5">
+                    <p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-200 rounded-full text-red-600">close</span></p>
+                    <p><span onClick={() => completeAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-green-300 rounded-full text-green-600">check_small</span></p>
+                  </div>
+              }
+
             </div>
           ))
         }
@@ -53,7 +58,7 @@ const DoctorAppointment = () => {
 
     </div>
 
-    
+
   )
 }
 
