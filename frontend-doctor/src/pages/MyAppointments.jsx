@@ -185,13 +185,13 @@ const MyAppointments = () => {
 
             <div>
               {
-                !item.cancelled && item?.payment &&
-                <button className="bg-green-700 sm:text-xs text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all" >Paid</button>
+                !item.cancelled && item?.payment && !item.isCompleted &&
+                <button className="bg-green-700 max-sm:text-xs  text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all" >Paid</button>
               }
-              {!item?.cancelled && !item?.payment &&  (
+              {!item?.cancelled && !item?.payment && !item.isCompleted &&  (
                 <button
                   onClick={() => appointmentRazorpay(item._id)}
-                  className="bg-blue-700 sm:text-xs text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all"
+                  className="bg-blue-700 max-sm:text-xs  text-sm text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all"
                 >
                   Pay Online
                 </button>
@@ -199,20 +199,24 @@ const MyAppointments = () => {
 
               <br />
 
-              {!item?.cancelled && (
+              {!item?.cancelled && !item.isCompleted && (
                 <button
                   onClick={() => cancelAppointment(item._id)}
-                  className="bg-red-800 sm:text-xs text-sm mt-2 text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all"
+                  className="bg-red-800 max-sm:text-xs text-sm mt-2 text-white rounded-2xl px-2 py-2 cursor-pointer hover:scale-95 transition-all"
                 >
                   Cancel Appointment
                 </button>
               )}
 
-              {item.cancelled && (
-                <button className="bg-gray-800 sm:text-xs font-semibold text-sm mt-2 text-red-400 rounded-2xl px-2 py-2 cursor-not-allowed">
+              {item.cancelled && !item.isCompleted && (
+                <button className="bg-gray-800 max-sm:text-xs font-semibold text-sm mt-2 text-red-400 rounded-2xl px-2 py-2 cursor-not-allowed">
                   Appointment Cancelled
                 </button>
               )}
+
+              {
+                item.isCompleted && <button className="sm:min-w-48 py-2 rounded bg-green-200 text-green-800">Completed</button>
+              }
 
             </div>
 

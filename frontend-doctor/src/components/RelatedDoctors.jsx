@@ -22,7 +22,7 @@ const RelatedDoctors = ({ docId, speciality }) => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
                 {relDoc.slice(0, 4).map((item, idx) => (
-                    <div onClick={() => {navigate(`/appointment/${item._id}`); scrollTo(0,0)}}
+                    <div onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0) }}
                         key={idx}
                         className="bg-stone-200 cursor-pointer rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 p-5 flex flex-col items-center text-center"
                     >
@@ -35,7 +35,13 @@ const RelatedDoctors = ({ docId, speciality }) => {
                         <p className=" text-blue-600">{item.speciality}</p>
                         <p className=" text-gray-600">{item.degree}</p>
                         <p className=" text-gray-600">Experience: {item.experience}</p>
-                        <p className="font-semibold flex items-center text-green-600 "><span className="material-symbols-outlined" style={{ fontSize: "16px" }}>adjust</span>Available</p>
+                        <p className={`font-semibold flex items-center gap-1 ${item.available ? "text-green-600" : "text-red-600"
+                            }`}>
+                            <span className="material-symbols-outlined text-sm">
+                                adjust
+                            </span>
+                            {item.available ? "Available" : "Unavailable"}
+                        </p>
                     </div>
                 ))}
             </div>

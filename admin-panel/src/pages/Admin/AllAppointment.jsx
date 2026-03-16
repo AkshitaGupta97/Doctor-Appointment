@@ -48,7 +48,8 @@ const AllAppointment = () => {
               <p>{item?.amount}</p>
               {
                 item?.cancelled ? <p className="text-red-800 ">Cancelled</p> 
-                :<p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-100 rounded-full text-red-400">close</span></p>
+                : item.isCompleted ? 
+                  <p className="text-green-600">Completed</p> : <p><span onClick={() => cancelAppointment(item._id)} className="material-symbols-outlined cursor-pointer font-bold bg-red-100 rounded-full text-red-400">close</span></p>
               }
               
             </div>

@@ -179,18 +179,23 @@ export const doctorProfile = async(req, res) => {
 
 // api to update doctor profile
 
-export const updateDoctorProfile = async(req, res) => {
-    try {
-        const doctorId = req.docId;
-        const {fees, address, available} = req.body;
+export const updateDoctorProfile = async (req, res) => {
+  try {
 
-        await doctorModel.findByIdAndUpdate(doctorId, {fees, address, available});
+    const doctorId = req.docId
+    const { fees, address, available } = req.body
 
-        res.json({success: true, message:"Profile Updated."})
+    await doctorModel.findByIdAndUpdate(
+      doctorId,
+      { fees, address, available },
+      { new: true }
+    )
 
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message });
-    }
+    res.json({ success: true, message: "Profile Updated." })
+
+  } catch (error) {
+    console.log(error)
+    res.json({ success: false, message: error.message })
+  }
 }
 
